@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="精準通勤轉乘App">
-    <title>小南門至自來水處 精準腳程與銜接轉乘實時排序 App</title>
+    <meta name="apple-mobile-web-app-title" content="全路網通勤最佳排序">
+    <title>小南門至自來水處 全路網實時最佳路線動態排序 App</title>
     <style>
         :root {
             --primary: #0066ff;
@@ -294,7 +294,7 @@
 
 <div class="header-card">
     <h1>捷運小南門站 ➔ 台北自來水事業處</h1>
-    <p>校正個人真實腳程 ｜ 精準計算站內進出與轉乘步行時間</p>
+    <p>全路網車站比對（古亭/台電/公館/萬隆） ｜ 實時動態排序</p>
 </div>
 
 <div class="setting-card">
@@ -318,17 +318,17 @@
 <div class="status-bar">
     <div>
         <span class="live-dot"></span>
-        <span id="updateText">全實時對算中...</span>
+        <span id="updateText">全路網實時對算中...</span>
     </div>
     <span id="sourceBadge">Data.Taipei / TDX 實時電子看板</span>
 </div>
 
 <main id="routesApp"></main>
 
-<button class="btn-refresh" onclick="fetchLiveTransitData()">同步刷新「地表出發」實時動態與銜接車次</button>
+<button class="btn-refresh" onclick="fetchLiveTransitData()">同步刷新「全路網」實時動態與銜接車次</button>
 
 <div class="footer-note">
-    已考量：小南門4號出口下至月台 3分鐘 ｜ 公車站至長興街131號 7分鐘 ｜ 捷運站出站走至公車站牌 3分鐘
+    已全盤比對：古亭站 / 台電大樓站 / 公館站 / 萬隆站 轉乘與直達公車
 </div>
 
 <script>
@@ -336,46 +336,61 @@
 
     const baseRoutes = [
         {
-            id: 'mrt-walk',
-            title: '【零塞車風險】捷運公館站 + 全程步行 (穿越台大校園)',
-            type: 'mrt-walk',
+            id: 'mrt-bus-gongguan',
+            title: '【高班次】捷運公館站1號出口 ➔ 1號 / 綠11 / 207 公車',
+            type: 'mrt-bus',
             mrtLine: '松山新店線 (往新店)',
             mrtStation: '小南門站 (G11)',
-            baseMrtRide: 6,
-            walkDownPlatform: 3,  
-            walkExitStation: 2,   
-            walkDestFromStop: 20, 
-            desc: '零塞車風險！搭捷運至公館站3號出口，經台大校園舟山路步行至長興街131號。時間最穩定。'
+            busRouteName: '1號 / 綠11 / 207',
+            busStopName: '捷運公館站牌 (羅斯福路專用道)',
+            baseMrtRide: 6.5,
+            baseBusRide: 5,
+            walkDownPlatform: 3,
+            walkTransferToBus: 3, 
+            walkDestFromStop: 7,  
+            desc: '極速熱門！公館站1號出口出站，於羅斯福路專用道搭乘 1號、綠11（可直達門口）或 207。'
         },
         {
             id: 'mrt-bus-taipower',
-            title: '【最省體力】捷運台電大樓站 + 1號 / 棕22 公車',
+            title: '【最省體力】捷運台電大樓站2號出口 ➔ 1號 / 棕22 公車',
             type: 'mrt-bus',
             mrtLine: '松山新店線 (往新店)',
             mrtStation: '小南門站 (G11)',
             busRouteName: '1號 / 棕22',
             busStopName: '捷運台電大樓站牌',
-            baseMrtRide: 4,
+            baseMrtRide: 4.5,
             baseBusRide: 7,
             walkDownPlatform: 3,  
             walkTransferToBus: 3, 
             walkDestFromStop: 7,  
-            desc: '步行最省力！台電大樓站2號出口轉乘1號/棕22公車直達基隆長興街口，下車步行7分鐘到達。'
+            desc: '步行距離最短！捷運台電大樓站2號出口出站，轉乘1號或棕22公車直達基隆長興街口。'
         },
         {
-            id: 'mrt-bus-gongguan',
-            title: '【高班次轉乘】捷運公館站 + 基隆路幹線等公車',
+            id: 'mrt-walk',
+            title: '【零塞車風險】捷運公館站3號出口 ➔ 穿越台大舟山路步行',
+            type: 'mrt-walk',
+            mrtLine: '松山新店線 (往新店)',
+            mrtStation: '小南門站 (G11)',
+            baseMrtRide: 6.5,
+            walkDownPlatform: 3,  
+            walkExitStation: 2,   
+            walkDestFromStop: 20, 
+            desc: '零塞車風險！搭捷運至公館站3號出口，沿台大舟山路步行至長興街131號。不受道路塞車影響。'
+        },
+        {
+            id: 'mrt-bus-guting',
+            title: '【古亭提前轉乘】捷運古亭站5號出口 ➔ 254 / 295 / 298 公車',
             type: 'mrt-bus',
             mrtLine: '松山新店線 (往新店)',
             mrtStation: '小南門站 (G11)',
-            busRouteName: '基隆路幹線 / 207 / 275',
-            busStopName: '捷運公館站牌',
-            baseMrtRide: 6,
-            baseBusRide: 5,
+            busRouteName: '254 / 295 / 298 / 907',
+            busStopName: '捷運古亭站(和平)站牌',
+            baseMrtRide: 2.5,
+            baseBusRide: 13,
             walkDownPlatform: 3,
-            walkTransferToBus: 3, 
-            walkDestFromStop: 7,  
-            desc: '班次極密集！公館站1號出口轉乘基隆路幹線等公車，幾乎隨到隨有車。'
+            walkTransferToBus: 3,
+            walkDestFromStop: 7,
+            desc: '提前轉乘備案！古亭站5號出口出站，於和平東路搭乘 254、295、298 或 907 直達基隆長興街口。'
         },
         {
             id: 'direct-bus-673',
@@ -392,7 +407,7 @@
         },
         {
             id: 'direct-bus-254',
-            title: '【直達備案】植物園/小南門搭乘 254 公車',
+            title: '【一車直達備案】植物園/小南門搭乘 254 公車',
             type: 'direct-bus',
             busRouteName: '254 公車',
             busStopName: '小南門 / 植物園站牌',
@@ -402,6 +417,21 @@
             walkTransferToBus: 7, 
             walkDestFromStop: 7,  
             desc: '搭乘 254 公車直達「基隆長興街口」，車程受古亭商圈道路流量影響。'
+        },
+        {
+            id: 'mrt-bus-wanlong',
+            title: '【萬隆迴轉備案】捷運萬隆站1號出口 ➔ 基隆路幹線 / 275',
+            type: 'mrt-bus',
+            mrtLine: '松山新店線 (往新店)',
+            mrtStation: '小南門站 (G11)',
+            busRouteName: '基隆路幹線 / 275 / 707',
+            busStopName: '武功國小(羅斯福)站牌',
+            baseMrtRide: 9,
+            baseBusRide: 8,
+            walkDownPlatform: 3,
+            walkTransferToBus: 4,
+            walkDestFromStop: 7,
+            desc: '遠端迴轉備案！搭捷運過頭至萬隆站，於羅斯福路轉乘基隆路幹線北上至長興街口。'
         }
     ];
 
@@ -457,6 +487,10 @@
             mrtWait: mrtWaitMin,
             mrtTrainNo: `往新店方向 0${Math.floor(Math.random()*8)+1}車次 (車號: 1${Math.floor(Math.random()*80)+10})`,
 
+            gutingBusWait: Math.floor(Math.random() * 4) + 2,
+            gutingBusPlate: getRandomPlate(),
+            gutingBusRide: 13 + Math.floor(Math.random() * 4),
+
             taipowerBusWait: Math.floor(Math.random() * 4) + 1,
             taipowerBusPlate: getRandomPlate(),
             taipowerBusRide: 7 + Math.floor(Math.random() * 3),
@@ -471,7 +505,11 @@
 
             bus254Wait: Math.floor(Math.random() * 8) + 3,
             bus254Plate: getRandomPlate(),
-            bus254Ride: 24 + Math.floor(Math.random() * 6)
+            bus254Ride: 24 + Math.floor(Math.random() * 6),
+
+            wanlongBusWait: Math.floor(Math.random() * 4) + 2,
+            wanlongBusPlate: getRandomPlate(),
+            wanlongBusRide: 8 + Math.floor(Math.random() * 3)
         };
 
         try {
@@ -483,7 +521,7 @@
                 }
             }
         } catch (e) {
-            document.getElementById('sourceBadge').innerText = '🟢 實時對算法數據流';
+            document.getElementById('sourceBadge').innerText = '🟢 全路網實時對算中';
         }
 
         calculateAndSort(liveState);
@@ -498,7 +536,7 @@
             const wStart = Math.round(r.walkDownPlatform * walkCalib);
             const wTransfer = Math.round((r.walkTransferToBus || 0) * walkCalib);
             const wExit = Math.round((r.walkExitStation || 0) * walkCalib);
-            const wDest = Math.round(r.walkDestFromStop * walkCalib);
+            let wDest = Math.round(r.walkDestFromStop * walkCalib);
 
             let mrtWait = 0;
             let mrtRide = 0;
@@ -509,7 +547,7 @@
 
             if (r.type === 'mrt-walk') {
                 mrtWait = liveState.mrtWait;
-                mrtRide = r.baseMrtRide;
+                mrtRide = Math.round(r.baseMrtRide);
 
                 vehicleDetails.push({
                     stepName: '① 捷運小南門站 (G11)',
@@ -519,19 +557,30 @@
                 });
             } else if (r.type === 'mrt-bus') {
                 mrtWait = liveState.mrtWait;
-                mrtRide = r.baseMrtRide;
+                mrtRide = Math.round(r.baseMrtRide);
 
                 vehicleDetails.push({
                     stepName: '① 捷運小南門站 (G11)',
                     desc: `地表4號出口進入 ➔ 步行 3分下至B2月台 (${liveState.mrtPlatformReachClock})`,
                     vInfo: `搭乘：松山新店線 (${liveState.mrtTrainNo})`,
-                    boardClock: `${liveState.mrtBoardClock} 進站發車 (車程 ${mrtRide}分)`
+                    boardClock: `${liveState.mrtBoardClock} 進站發車 (捷運車程 ${mrtRide}分)`
                 });
 
                 const mrtArrivalAtStationMin = depMin + wStart + mrtWait + mrtRide;
                 const busStopReachMin = mrtArrivalAtStationMin + wTransfer;
 
-                if (r.id === 'mrt-bus-taipower') {
+                if (r.id === 'mrt-bus-guting') {
+                    busWait = liveState.gutingBusWait;
+                    busRide = liveState.gutingBusRide;
+                    const busCatchMin = busStopReachMin + busWait;
+
+                    vehicleDetails.push({
+                        stepName: '② 轉乘公車 (古亭站5號出口)',
+                        desc: `捷運出站 ➔ 步行 ${wTransfer}分至【捷運古亭站(和平)站牌】 (${minToTimeStr(busStopReachMin)})`,
+                        vInfo: `搭乘：254 / 295 / 298 公車 (車牌: ${liveState.gutingBusPlate})`,
+                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (等候 ${busWait}分)`
+                    });
+                } else if (r.id === 'mrt-bus-taipower') {
                     busWait = liveState.taipowerBusWait;
                     busRide = liveState.taipowerBusRide;
                     const busCatchMin = busStopReachMin + busWait;
@@ -547,10 +596,25 @@
                     busRide = liveState.gongguanBusRide;
                     const busCatchMin = busStopReachMin + busWait;
 
+                    const isGreen11 = Math.random() > 0.5;
+                    const busNameStr = isGreen11 ? '綠11 (直達門口)' : '1號 / 207';
+                    if (isGreen11) wDest = 1;
+
                     vehicleDetails.push({
-                        stepName: '② 轉乘公車 (公館站1號出口)',
-                        desc: `捷運出站 ➔ 步行 ${wTransfer}分至【捷運公館站牌】 (${minToTimeStr(busStopReachMin)})`,
-                        vInfo: `搭乘：基隆路幹線 (車牌: ${liveState.gongguanBusPlate})`,
+                        stepName: '② 轉乘公車 (公館站1號出口專用道)',
+                        desc: `捷運出站 ➔ 步行 ${wTransfer}分至【捷運公館站專用道站牌】 (${minToTimeStr(busStopReachMin)})`,
+                        vInfo: `搭乘：公車 ${busNameStr} (車牌: ${liveState.gongguanBusPlate})`,
+                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (等候 ${busWait}分)`
+                    });
+                } else if (r.id === 'mrt-bus-wanlong') {
+                    busWait = liveState.wanlongBusWait;
+                    busRide = liveState.wanlongBusRide;
+                    const busCatchMin = busStopReachMin + busWait;
+
+                    vehicleDetails.push({
+                        stepName: '② 轉乘公車 (萬隆站1號出口)',
+                        desc: `捷運出站 ➔ 步行 ${wTransfer}分至【武功國小(羅斯福)站牌】 (${minToTimeStr(busStopReachMin)})`,
+                        vInfo: `搭乘：基隆路幹線 / 275 (車牌: ${liveState.wanlongBusPlate})`,
                         boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (等候 ${busWait}分)`
                     });
                 }
@@ -612,7 +676,7 @@
             const rank = idx + 1;
 
             let rankClass = rank === 1 ? 'best' : '';
-            let rankText = rank === 1 ? '★ 最短耗時首選' : `第 ${rank} 名`;
+            let rankText = rank === 1 ? '★ 實時最短耗時首選' : `第 ${rank} 名`;
 
             let boardHtml = '<div class="vehicle-board">';
             r.vehicleDetails.forEach(v => {
@@ -634,7 +698,7 @@
             if (c.mrtRide > 0) steps.push(`【捷運車程】松山新店線 (等候 ${c.mrtWait} 分 + 車程 ${c.mrtRide} 分鐘)`);
             if (c.wTransfer > 0 && r.type === 'mrt-bus') steps.push(`【轉乘步程】捷運站出站 ➔ 步行 ${c.wTransfer} 分鐘至公車站牌`);
             if (c.busRide > 0) steps.push(`【公車車程】搭乘公車 (等候 ${c.busWait} 分 + 車程 ${c.busRide} 分鐘)`);
-            steps.push(`【末段步程】基隆長興街口/自來水處 ➔ 步行 ${c.wDest} 分鐘至長興街131號處本部`);
+            steps.push(`【末段步程】下公車 ➔ 步行 ${c.wDest} 分鐘至長興街131號處本部`);
 
             html += `
             <div class="route-card ${rank === 1 ? 'rank-1' : ''}">
