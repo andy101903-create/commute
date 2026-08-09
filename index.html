@@ -301,7 +301,7 @@
 
 <div class="header-card">
     <h1>捷運小南門站 ➔ 台北自來水事業處</h1>
-    <p>範圍限定：捷運最遠至公館站 ｜ 末段交叉口步程：5 分鐘</p>
+    <p>範圍限定：捷運最遠至公館站 ｜ 交叉口末段步程：5 分鐘</p>
 </div>
 
 <div class="setting-card">
@@ -325,7 +325,7 @@
 <div class="status-bar">
     <div>
         <span class="live-dot"></span>
-        <span id="updateText">Data.Taipei / TDX 實時數據對接中...</span>
+        <span id="updateText">Data.Taipei 實時數據串接中...</span>
     </div>
     <span id="sourceBadge">大臺北實時公車/捷運 API</span>
 </div>
@@ -505,7 +505,7 @@
             if (busRes.ok) {
                 const busData = await busRes.json();
                 if (busData && busData.BusInfo) {
-                    document.getElementById('sourceBadge').innerText = '🟢 已對接雙北實時公車/捷運 API';
+                    document.getElementById('sourceBadge').innerText = '🟢 已連線雙北實時 API (Data.Taipei 同步)';
                 }
             }
         } catch (e) {
