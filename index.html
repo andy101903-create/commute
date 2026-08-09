@@ -113,7 +113,7 @@
             border-radius: 10px;
             font-size: 0.85rem;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .live-dot {
@@ -131,6 +131,26 @@
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+        }
+
+        /* 按鈕移至頂部之專屬樣式 */
+        .btn-refresh {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-refresh:active {
+            transform: scale(0.98);
         }
 
         .route-card {
@@ -271,24 +291,6 @@
             margin-bottom: 4px;
         }
 
-        .btn-refresh {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.98rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
-            margin-top: 8px;
-        }
-
-        .btn-refresh:active {
-            transform: scale(0.98);
-        }
-
         .footer-note {
             text-align: center;
             font-size: 0.78rem;
@@ -301,7 +303,7 @@
 
 <div class="header-card">
     <h1>捷運小南門站 ➔ 台北自來水事業處</h1>
-    <p>範圍限定：捷運最遠至公館站 ｜ 交叉口末段步程：5 分鐘</p>
+    <p>範圍限定：捷運最遠至公館站 ｜ 末段交叉口步程：5 分鐘</p>
 </div>
 
 <div class="setting-card">
@@ -325,14 +327,15 @@
 <div class="status-bar">
     <div>
         <span class="live-dot"></span>
-        <span id="updateText">Data.Taipei 實時數據串接中...</span>
+        <span id="updateText">Data.Taipei / TDX 實時數據對接中...</span>
     </div>
     <span id="sourceBadge">大臺北實時公車/捷運 API</span>
 </div>
 
-<main id="routesApp"></main>
+<!-- 同步刷新按鈕已移至最省時方案列表最頂部 -->
+<button class="btn-refresh" onclick="fetchLiveTransitData()">🔄 刷新雙北實時公車與捷運動態</button>
 
-<button class="btn-refresh" onclick="fetchLiveTransitData()">同步刷新雙北實時公車與捷運進站看板</button>
+<main id="routesApp"></main>
 
 <div class="footer-note">
     已校正：地表至月台 3 分鐘 ｜ 基隆路長興街口至自來水處大門 5 分鐘 ｜ 已納入 907、棕12 ｜ 已剔除 207 與萬隆站
@@ -505,7 +508,7 @@
             if (busRes.ok) {
                 const busData = await busRes.json();
                 if (busData && busData.BusInfo) {
-                    document.getElementById('sourceBadge').innerText = '🟢 已連線雙北實時 API (Data.Taipei 同步)';
+                    document.getElementById('sourceBadge').innerText = '🟢 已對接雙北實時 API (Data.Taipei 同步)';
                 }
             }
         } catch (e) {
