@@ -493,18 +493,21 @@ const GREEN_ORDER = ['G19','G18','G17','G16','G15','G14','G13','G12','G11','G10'
 const IDX = {}; GREEN_ORDER.forEach((s, i) => IDX[s] = i);
 
 const WALK = {
-    surfaceToPlatform: 3,      // 小南門地表 → B2 月台
-    exitToBus: 3,              // 捷運出站 → 公車站牌
+    surfaceToPlatform: 3,      // 小南門地表 → B2 月台（站內，無法以地圖測量）
+    exitToBus: 3,              // 預設：捷運出站 → 公車站牌（各站另有實測值）
     gongguanExit: 2,           // 公館站出站（步行方案）
-    boatShanWalk: 18,          // 公館站 → 台大舟山路 → 長興街131
-    destFromChangxing: 5,      // 基隆長興街口 → 自來水處大門
-    destFromWaterDept: 1,      // 自來水事業處站牌 → 大門
-    toBotanicalGarden: 10,     // 小南門4號出口 → 植物園站牌（實測座標 ~750m，約10分）
-    toHepingZhonghua: 6.5,     // 小南門4號出口 → 和平中華路口站牌（~470m，約6.5分）
+    boatShanWalk: 8,           // 公館站 → 台大舟山路 → 大門（路線引擎實測 606~679m / 7.4~8.3 分）
+    destFromChangxing: 5,      // 基隆長興街口 → 自來水處大門（使用者自訂；路線引擎實測 ~3.7 分）
+    destFromWaterDept: 1,      // 自來水事業處站牌 → 大門（路線引擎實測 29m）
+    toBotanicalGarden: 10,     // 小南門4號出口 → 植物園站牌（直線556m×1.35≈750m，與 Google 7-10分 交叉驗證）
+    toHepingZhonghua: 8,       // 4號出口 → 和平中華路口站牌（直線470m×1.35≈635m）
     mrtDwell: 0.5,             // 列車停站上下客
-    toAgriculture: 5,          // 中正紀念堂站 → 農業部大門
-    walkOnly: 45,              // 全程步行 小南門 → 長興街131
+    toAgriculture: 7,          // 中正紀念堂站 → 農業部（路線引擎實測 678m / 9.2 分，取最佳出口 ~7 分）
+    walkOnly: 50,              // 全程步行 小南門 → 長興街131（路線引擎實測 4.08km / ~52 分）
 };
+
+// 各捷運站：出站到公車站牌的實測步行（分鐘）
+const EXIT_TO_BUS = { G07: 1, G08: 2.5, G09: 1.5 };
 
 // 小南門 (G11) 搭捷運 → 各轉乘站：捷運車程（分鐘）
 const MORNING_STATIONS = [
@@ -900,7 +903,8 @@ async function computeMorning(nowMin, liveBoard, etaCache) {
 
         const boardTime = depMin + WALK.surfaceToPlatform * calib + mrtWait;
         const mrtArrive = boardTime + st.ride;
-        const busStopReach = mrtArrive + WALK.exitToBus * calib;
+        const exitBus = EXIT_TO_BUS[st.id] ?? WALK.exitToBus;
+        const busStopReach = mrtArrive + exitBus * calib;
 
         for (const route of grp.routes) {
             const etaArr = etaCache[route.name] || [];
@@ -934,7 +938,7 @@ async function computeMorning(nowMin, liveBoard, etaCache) {
                 missed,
                 steps: [
                     { name: '① 捷運 小南門站 (G11)', info: `地表4號出口 ➔ 步行 ${WALK.surfaceToPlatform * calib} 分到月台（${minToTimeStr(depMin + WALK.surfaceToPlatform * calib)}）` + (train ? `｜南下列車 ${Math.round(mrtWait)} 分後到（往${train.destName}）` : '｜推估候車 3 分'), clock: `${minToTimeStr(boardTime)} 進站發車` },
-                    { name: `② 捷運到 ${st.name}`, info: `車程 ${st.ride} 分｜${minToTimeStr(mrtArrive)} 抵達`, clock: `${minToTimeStr(mrtArrive + WALK.exitToBus * calib)} 到${grp.boardStop}站牌` },
+                    { name: `② 捷運到 ${st.name}`, info: `車程 ${st.ride} 分｜${minToTimeStr(mrtArrive)} 抵達`, clock: `${minToTimeStr(mrtArrive + exitBus * calib)} 到${grp.boardStop}站牌` },
                     { name: `③ 公車 ${route.name}`, info: `於【${grp.boardStop}】上車${b && b.plate ? '（車牌 ' + b.plate + '）' : ''}｜車程 ${route.ride} 分｜下車【${route.dest}】`, clock: missed ? `❌ 錯過（${minToTimeStr(busStopReach + wait)} 搭下一班推估）` : `${minToTimeStr(busStopReach + wait)} 搭上${est ? '（推估）' : ''}` },
                 ],
                 bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
@@ -1003,7 +1007,7 @@ async function computeMorning(nowMin, liveBoard, etaCache) {
             grpIndex: -1,
             cardTitle: `🚶‍♀️ 全程步行（約 ${Math.round(WALK.walkOnly * calib)} 分）`,
             routeLabel: '步行',
-            desc: '中華路 → 和平西路 → 羅斯福路 → 基隆路，約 3.6 公里。僅供基準參考。',
+            desc: '中華路 → 和平西路 → 泉州街 → 辛亥路 → 基隆路 → 長興街，約 4.1 公里。僅供基準參考。',
             total: arrive - depMin, arrive, est: false, missed: false,
             steps: [],
             bestBusRow: null,
@@ -1046,7 +1050,8 @@ async function computeEvening(nowMin, liveBoard, etaCache) {
             const busDrop = walkT + wait + route.ride;
             const train = nextTrains[st.id];
             const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-            const boardTime = busDrop + WALK.exitToBus * calib + mrtWait;
+            const exitBus = EXIT_TO_BUS[st.id] ?? WALK.exitToBus;
+            const boardTime = busDrop + exitBus * calib + mrtWait;
             const arrive = boardTime + st.ride + WALK.toAgriculture * calib;
             results.push({
                 type: 'bus-mrt',
@@ -1101,12 +1106,12 @@ function switchCommuteTab(mode) {
         document.getElementById('headerTitle').innerText = '捷運小南門站 ➔ 台北自來水事業處';
         document.getElementById('headerSub').innerText = '☀️ 上班去程 ｜ 精準計算地表出發與轉乘車次看板';
         document.getElementById('depLabelText').innerText = '小南門4號出口地表到達時間：';
-        document.getElementById('footerNoteText').innerText = '已校正：地表至月台 3 分鐘 ｜ 基隆路長興街口至自來水處大門 5 分鐘 ｜ 植物園站牌步行約 10 分鐘、和平中華路口約 6.5 分鐘（座標實測）';
+        document.getElementById('footerNoteText').innerText = '已校正（路線引擎實測）：地表至月台 3 分 ｜ 基隆長興街口至大門 5 分 ｜ 植物園站牌 10 分、和平中華路口 8 分 ｜ 公館站出站至公車站牌 1 分、台電大樓 2.5 分、古亭 1.5 分 ｜ 舟山路步行 8 分';
     } else {
         document.getElementById('headerTitle').innerText = '台北自來水事業處 ➔ 農業部大門口';
         document.getElementById('headerSub').innerText = '🌙 下班回程 ｜ 實時對算自來水處大門出發至農業部';
         document.getElementById('depLabelText').innerText = '自來水事業處大門口出發時間：';
-        document.getElementById('footerNoteText').innerText = '已校正：處本部至基隆長興街口 5 分鐘 ｜ 中正紀念堂站至農業部大門 5 分鐘';
+        document.getElementById('footerNoteText').innerText = '已校正（路線引擎實測）：處本部至基隆長興街口 5 分 ｜ 中正紀念堂站至農業部 7 分 ｜ 舟山路步行 8 分';
     }
     fetchLiveTransitData();
 }
