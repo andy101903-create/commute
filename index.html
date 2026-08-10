@@ -99,6 +99,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            gap: 8px;
         }
 
         .form-row:last-child {
@@ -108,6 +109,7 @@
         .form-label {
             font-size: 0.9rem;
             font-weight: 600;
+            flex-shrink: 0;
         }
 
         input[type="time"], select {
@@ -131,6 +133,59 @@
             margin-left: 8px;
         }
 
+        .key-card {
+            background: #fff8e6;
+            border: 1px solid #f0d48a;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            font-size: 0.85rem;
+        }
+
+        .key-card summary {
+            font-weight: 700;
+            color: #7a5b00;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .key-card .krow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .key-card input {
+            flex: 1;
+            min-width: 120px;
+            padding: 7px 10px;
+            border: 1px solid #d9c68a;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            background: #fffdf5;
+            outline: none;
+        }
+
+        .key-card button {
+            padding: 7px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: #7a5b00;
+            color: white;
+        }
+
+        .key-card .knote {
+            margin-top: 8px;
+            color: #8a6d1f;
+            line-height: 1.5;
+        }
+
         .status-bar {
             display: flex;
             align-items: center;
@@ -142,6 +197,17 @@
             font-size: 0.85rem;
             font-weight: 600;
             margin-bottom: 12px;
+            gap: 8px;
+        }
+
+        .status-bar.est {
+            background: #fff3e0;
+            color: #a05a00;
+        }
+
+        .status-bar.err {
+            background: #fdeaea;
+            color: #b02a2a;
         }
 
         .live-dot {
@@ -154,6 +220,9 @@
             box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
             animation: pulse 1.5s infinite;
         }
+
+        .live-dot.est { background: var(--orange); box-shadow: 0 0 0 0 rgba(253, 126, 20, 0.7); }
+        .live-dot.err { background: var(--red); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
 
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
@@ -176,9 +245,21 @@
             transition: all 0.2s ease;
         }
 
-        .btn-refresh:active {
-            transform: scale(0.98);
+        .btn-refresh:active { transform: scale(0.98); }
+
+        .overall-best {
+            background: linear-gradient(135deg, #1e7e34, #28a745);
+            color: white;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            font-size: 0.95rem;
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.3);
         }
+
+        .overall-best .ob-title { font-size: 0.8rem; opacity: 0.9; font-weight: 700; }
+        .overall-best .ob-main { font-weight: 800; font-size: 1.05rem; margin-top: 4px; }
+        .overall-best .ob-sub { font-size: 0.82rem; opacity: 0.92; margin-top: 3px; }
 
         .route-card {
             background: var(--card-bg);
@@ -204,7 +285,7 @@
         }
 
         .route-title {
-            font-size: 1.05rem;
+            font-size: 1.02rem;
             font-weight: 700;
             line-height: 1.4;
             color: #1a202c;
@@ -222,15 +303,8 @@
             flex-shrink: 0;
         }
 
-        .rank-badge.best {
-            background: var(--green);
-            color: white;
-        }
-
-        .rank-badge.late {
-            background: var(--red);
-            color: white;
-        }
+        .rank-badge.best { background: var(--green); color: white; }
+        .rank-badge.late { background: var(--red); color: white; }
 
         .vehicle-board {
             background: #f0f4f9;
@@ -258,26 +332,44 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 700;
+            gap: 8px;
         }
 
-        .v-name {
-            color: #1a202c;
-        }
+        .v-name { color: #1a202c; }
+        .v-time { color: var(--primary-dark); font-weight: 800; white-space: nowrap; }
 
-        .v-time {
-            color: var(--primary-dark);
-            font-weight: 800;
-        }
-
-        .v-time.bus {
-            color: var(--orange);
-        }
+        .v-time.bus { color: var(--orange); }
+        .v-time.est { color: #a05a00; }
+        .v-time.no { color: #999; font-weight: 600; }
 
         .v-sub {
             font-size: 0.8rem;
             color: #555;
             margin-top: 2px;
         }
+
+        .bus-rows {
+            margin-bottom: 10px;
+        }
+
+        .bus-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: #f7f9fc;
+            margin-bottom: 5px;
+            gap: 8px;
+        }
+
+        .bus-row.best-row { background: #e6f6ea; outline: 1px solid #b5e3c0; }
+
+        .bus-row .br-name { font-weight: 800; font-size: 0.92rem; color: #1a202c; flex-shrink: 0; }
+        .bus-row .br-info { flex: 1; font-size: 0.8rem; color: #555; line-height: 1.35; }
+        .bus-row .br-eta { font-weight: 800; font-size: 0.92rem; color: var(--orange); white-space: nowrap; }
+        .bus-row .br-eta.no { color: #999; font-weight: 600; }
+        .bus-row .br-eta.ok { color: var(--green); }
 
         .time-display-grid {
             display: grid;
@@ -290,18 +382,8 @@
             text-align: center;
         }
 
-        .time-box-title {
-            font-size: 0.72rem;
-            color: var(--text-sub);
-            margin-bottom: 2px;
-        }
-
-        .time-box-num {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--text);
-        }
-
+        .time-box-title { font-size: 0.72rem; color: var(--text-sub); margin-bottom: 2px; }
+        .time-box-num { font-size: 1.15rem; font-weight: 800; color: var(--text); }
         .time-box-num.primary { color: var(--primary); }
         .time-box-num.green { color: var(--green); }
         .time-box-num.red { color: var(--red); }
@@ -314,15 +396,21 @@
             padding-left: 18px;
         }
 
-        .steps-detail li {
-            margin-bottom: 4px;
-        }
+        .steps-detail li { margin-bottom: 4px; }
 
         .footer-note {
             text-align: center;
             font-size: 0.78rem;
             color: var(--text-sub);
             margin-top: 20px;
+        }
+
+        .data-source-note {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -337,6 +425,22 @@
     <button id="tabMorning" class="tab-btn active" onclick="switchCommuteTab('morning')">☀️ 上班去程 (到自來水處)</button>
     <button id="tabEvening" class="tab-btn" onclick="switchCommuteTab('evening')">🌙 下班回程 (到農業部)</button>
 </div>
+
+<details class="key-card" id="keyCard">
+    <summary>🔑 TDX 金鑰設定（選填｜不設定也能用，但建議申請避免限流）</summary>
+    <div class="krow">
+        <input type="text" id="tdxClientId" placeholder="Client ID" autocomplete="off">
+        <input type="password" id="tdxClientSecret" placeholder="Client Secret" autocomplete="off">
+        <button onclick="saveTdxKeys()">儲存</button>
+        <button onclick="clearTdxKeys()" style="background:#999;">清除</button>
+    </div>
+    <div class="knote" id="keyStatus"></div>
+    <div class="knote">
+        💰 <b>完全免費</b>：TDX 基礎會員 0 元/月、免綁信用卡，每月免費 3 點（約 4,500 次呼叫），個人通勤用綽綽有餘。<br>
+        👉 申請：<b>tdx.transportdata.tw</b> 註冊 → 會員中心「應用程式管理」新增應用程式，取得 Client ID / Client Secret。
+        金鑰只存在你手機瀏覽器本機（localStorage），不會上傳 GitHub、不會外流。
+    </div>
+</details>
 
 <div class="setting-card">
     <div class="form-row">
@@ -356,12 +460,12 @@
     </div>
 </div>
 
-<div class="status-bar">
+<div class="status-bar" id="statusBar">
     <div>
-        <span class="live-dot"></span>
-        <span id="updateText">Data.Taipei / TDX 實時數據對接中...</span>
+        <span class="live-dot" id="liveDot"></span>
+        <span id="updateText">連線中...</span>
     </div>
-    <span id="sourceBadge">大臺北實時 API</span>
+    <span id="sourceBadge">TDX 即時 API</span>
 </div>
 
 <button class="btn-refresh" onclick="fetchLiveTransitData()">🔄 刷新實時動態與進站電子看板</button>
@@ -373,463 +477,859 @@
 </div>
 
 <script>
-    let currentMode = 'morning';
-    let isAutoFollowNow = true;
+/* =====================================================================
+   雙向通勤即時 App — TDX (Transport Data eXchange) 即時公車/捷運資料
+   資料來源：https://tdx.transportdata.tw （免費開放資料，基礎服務免金鑰）
+   ===================================================================== */
 
-    const morningRoutes = [
-        {
-            id: 'mrt-bus-gongguan',
-            title: '【高班次】捷運公館站1號出口 ➔ 1號 / 綠11 / 棕12 公車',
-            type: 'mrt-bus',
-            mrtLine: '松山新店線 (往新店)',
-            mrtStation: '小南門站 (G11)',
-            busRouteName: '1號 / 綠11 / 棕12 / 672',
-            busStopName: '捷運公館站牌 (羅斯福路專用道)',
-            baseMrtRide: 6.5,
-            baseBusRide: 5,
-            walkDownPlatform: 3,
-            walkTransferToBus: 3, 
-            walkDestFromStop: 5,  
-            desc: '極速熱門！公館站1號出口出站，於羅斯福路專用道搭乘 1號、綠11（可直達門口）或 棕12。'
-        },
-        {
-            id: 'mrt-bus-taipower',
-            title: '【最省體力】捷運台電大樓站2號出口 ➔ 1號 / 棕22 公車',
-            type: 'mrt-bus',
-            mrtLine: '松山新店線 (往新店)',
-            mrtStation: '小南門站 (G11)',
-            busRouteName: '1號 / 棕22',
-            busStopName: '捷運台電大樓站牌',
-            baseMrtRide: 4.5,
-            baseBusRide: 7,
-            walkDownPlatform: 3,  
-            walkTransferToBus: 3, 
-            walkDestFromStop: 5,  
-            desc: '步行距離最短！捷運台電大樓站2號出口出站，轉乘1號或棕22公車直達基隆長興街口，下車步行5分鐘到大門。'
-        },
-        {
-            id: 'mrt-walk',
-            title: '【零塞車風險】捷運公館站3號出口 ➔ 穿越台大舟山路步行',
-            type: 'mrt-walk',
-            mrtLine: '松山新店線 (往新店)',
-            mrtStation: '小南門站 (G11)',
-            baseMrtRide: 6.5,
-            walkDownPlatform: 3,  
-            walkExitStation: 2,   
-            walkDestFromStop: 18, 
-            desc: '零塞車風險！搭捷運至公館站3號出口，沿台大舟山路步行至長興街131號。時間最穩定。'
-        },
-        {
-            id: 'mrt-bus-guting',
-            title: '【古亭提前轉乘】捷運古亭站5號出口 ➔ 907 / 棕12 / 254 公車',
-            type: 'mrt-bus',
-            mrtLine: '松山新店線 (往新店)',
-            mrtStation: '小南門站 (G11)',
-            busRouteName: '907 / 棕12 / 254 / 295 / 298',
-            busStopName: '捷運古亭站(和平)站牌',
-            baseMrtRide: 2.5,
-            baseBusRide: 12,
-            walkDownPlatform: 3,
-            walkTransferToBus: 3,
-            walkDestFromStop: 5,
-            desc: '提前轉乘熱門線！古亭站5號出口出站，於和平東路搭乘 907、棕12、254、295 直達基隆長興街口。'
-        },
-        {
-            id: 'direct-bus-673',
-            title: '【一車直達】和平醫院站搭乘 673 直達公車',
-            type: 'direct-bus',
-            busRouteName: '673 公車',
-            busStopName: '市立聯合醫院和平院區站牌',
-            baseMrtRide: 0,
-            baseBusRide: 20,
-            walkDownPlatform: 0,
-            walkTransferToBus: 5, 
-            walkDestFromStop: 5,  
-            desc: '從4號出口地表步行5分鐘至和平醫院站搭673公車，直達長興街口，免換捷運。'
-        },
-        {
-            id: 'direct-bus-254',
-            title: '【一車直達備案】植物園/小南門搭乘 254 公車',
-            type: 'direct-bus',
-            busRouteName: '254 公車',
-            busStopName: '小南門 / 植物園站牌',
-            baseMrtRide: 0,
-            baseBusRide: 24,
-            walkDownPlatform: 0,
-            walkTransferToBus: 7, 
-            walkDestFromStop: 5,  
-            desc: '搭乘 254 公車直達「基隆長興街口」，車程受古亭商圈道路流量影響。'
-        }
-    ];
+let currentMode = 'morning';
+let isAutoFollowNow = true;
+let lastRender = { depStr: '', data: null };
 
-    const eveningRoutes = [
-        {
-            id: 'ev-bus-taipower-mrt',
-            title: '【公車轉捷運】1號 / 棕22 公車 ➔ 捷運台電大樓站 ➔ 捷運中正紀念堂站 / 小南門站',
-            type: 'bus-mrt',
-            busRouteName: '1號 / 棕22',
-            busStopName: '基隆長興街口站牌',
-            mrtLine: '松山新店線 (往松山)',
-            mrtStation: '台電大樓站 (G08)',
-            baseBusRide: 7,
-            baseMrtRide: 4.5,
-            walkStartToStop: 5,    
-            walkTransferToMrt: 3,  
-            walkMrtToDest: 5,      
-            desc: '最順路方案！步行5分鐘至基隆長興街口搭1號/棕22公車至捷運台電大樓站，轉捷運至中正紀念堂站/小南門站，步行至農業部大門。'
-        },
-        {
-            id: 'ev-bus-gongguan-mrt',
-            title: '【綠11門口上車】綠11 公車 ➔ 捷運公館站 ➔ 捷運中正紀念堂站 / 小南門站',
-            type: 'bus-mrt',
-            busRouteName: '綠11 公車',
-            busStopName: '自來水事業處站牌 (側門大門邊)',
-            mrtLine: '松山新店線 (往松山)',
-            mrtStation: '公館站 (G07)',
-            baseBusRide: 6,
-            baseMrtRide: 6.5,
-            walkStartToStop: 1,    
-            walkTransferToMrt: 3,  
-            walkMrtToDest: 5,      
-            desc: '門口即上車！在自來水事業處大門側邊搭乘綠11公車直達捷運公館站，轉乘捷運綠線直達中正紀念堂/小南門站，步行至農業部。'
-        },
-        {
-            id: 'ev-direct-bus-254',
-            title: '【一車直達公車】254 公車直達「植物園 / 農業部 / 南門市場」站',
-            type: 'direct-bus',
-            busRouteName: '254 公車',
-            busStopName: '基隆長興街口站牌',
-            baseBusRide: 22,
-            baseMrtRide: 0,
-            walkStartToStop: 5,
-            walkTransferToMrt: 0,
-            walkMrtToDest: 4,      
-            desc: '一車直達！步行5分鐘至基隆長興街口搭254公車，直達「植物園/農業部」站，免轉乘捷運。'
-        },
-        {
-            id: 'ev-bus-guting-mrt',
-            title: '【古亭轉乘】907 / 棕12 公車 ➔ 捷運古亭站 ➔ 捷運中正紀念堂站',
-            type: 'bus-mrt',
-            busRouteName: '907 / 棕12 / 295',
-            busStopName: '自來水處(辛亥) / 基隆長興街口站牌',
-            mrtLine: '松山新店線 (往松山)',
-            mrtStation: '古亭站 (G09)',
-            baseBusRide: 12,
-            baseMrtRide: 2.5,
-            walkStartToStop: 5,
-            walkTransferToMrt: 3,
-            walkMrtToDest: 5,
-            desc: '公車備案！搭907或棕12公車至捷運古亭站，轉搭捷運1站至中正紀念堂站，步行至農業部。'
-        },
-        {
-            id: 'ev-walk-mrt',
-            title: '【零塞車備案】穿越台大舟山路步行至捷運公館站 ➔ 捷運至中正紀念堂站',
-            type: 'mrt-walk',
-            mrtLine: '松山新店線 (往松山)',
-            mrtStation: '公館站 (G07)',
-            baseMrtRide: 6.5,
-            baseBusRide: 0,
-            walkStartToStop: 18,  
-            walkTransferToMrt: 2,  
-            walkMrtToDest: 5,      
-            desc: '零塞車極速散步！從處本部沿台大舟山路散步至捷運公館站3號出口，搭捷運直達中正紀念堂站/小南門站，步行至農業部。'
-        }
-    ];
+/* ---------- 路線/站牌 資料模型（2026-08 以 TDX 實際站名驗證） ---------- */
 
-    function timeToMin(str) {
-        if (!str) return 0;
-        const [h, m] = str.split(':').map(Number);
-        return h * 60 + m;
+// 松山新店線 站序（南向 新店 G01 … 北向 松山 G19）
+const GREEN_ORDER = ['G19','G18','G17','G16','G15','G14','G13','G12','G11','G10','G09','G08','G07','G06','G05','G04','G03','G02','G01'];
+const IDX = {}; GREEN_ORDER.forEach((s, i) => IDX[s] = i);
+
+const WALK = {
+    surfaceToPlatform: 3,      // 小南門地表 → B2 月台
+    exitToBus: 3,              // 捷運出站 → 公車站牌
+    gongguanExit: 2,           // 公館站出站（步行方案）
+    boatShanWalk: 18,          // 公館站 → 台大舟山路 → 長興街131
+    destFromChangxing: 5,      // 基隆長興街口 → 自來水處大門
+    destFromWaterDept: 1,      // 自來水事業處站牌 → 大門
+    toBotanicalGarden: 4,      // 小南門4號出口 → 植物園站牌
+    mrtDwell: 0.5,             // 列車停站上下客
+    toAgriculture: 5,          // 中正紀念堂站 → 農業部大門
+    walkOnly: 45,              // 全程步行 小南門 → 長興街131
+};
+
+// 小南門 (G11) 搭捷運 → 各轉乘站：捷運車程（分鐘）
+const MORNING_STATIONS = [
+    { id: 'G07', name: '公館站',  exit: '1號出口', ride: 6.5 },
+    { id: 'G08', name: '台電大樓站', exit: '2號出口', ride: 4.5 },
+    { id: 'G09', name: '古亭站',  exit: '5號出口', ride: 2.5 },
+];
+
+// 各站可搭公車：boardStop=上車站牌名（TDX 官方站名）、dest=下車站牌、destWalk=下車後步行
+const MORNING_BUS = [
+    {
+        stationId: 'G07', stationName: '公館站', exit: '1號出口',
+        boardStop: '捷運公館站',
+        routes: [
+            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '綠11', ride: 6, dest: '自來水事業處', destWalk: 1 }, // 直達門口！
+        ],
+    },
+    {
+        stationId: 'G08', stationName: '台電大樓站', exit: '2號出口',
+        boardStop: '捷運台電大樓站',
+        routes: [
+            { name: '1',   ride: 7, dest: '基隆長興街口', destWalk: 5 },
+            { name: '棕12', ride: 7, dest: '基隆長興街口', destWalk: 5 },
+            { name: '棕22', ride: 7, dest: '基隆長興街口', destWalk: 5 },
+        ],
+    },
+    {
+        stationId: 'G09', stationName: '古亭站', exit: '5號出口',
+        boardStop: '捷運古亭站(和平)',
+        routes: [
+            { name: '907', ride: 12, dest: '基隆長興街口', destWalk: 5 },
+        ],
+    },
+];
+
+// 免捷運：植物園站牌直達公車（小南門4號出口步行約4分鐘）
+const MORNING_DIRECT = {
+    boardStop: '植物園',
+    walkFromExit: 4,
+    routes: [
+        { name: '1',   ride: 14, dest: '基隆長興街口', destWalk: 5 },
+        { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 5 },
+    ],
+};
+
+// 捷運公館站 → 步行（台大舟山路）＋ 全程步行
+const MORNING_WALK_MRT = { stationId: 'G07', ride: 6.5 };
+
+/* ---------- 下班回程（自來水處 → 農業部） ---------- */
+const EVENING_STATIONS = [
+    { id: 'G07', name: '公館站',   ride: 4.5 },  // → 中正紀念堂
+    { id: 'G08', name: '台電大樓站', ride: 3 },
+    { id: 'G09', name: '古亭站',   ride: 1.5 },
+];
+
+// 回程：在「基隆長興街口 / 自來水事業處」上車 → 捷運站（北向）
+// destStop = 公車下車站（同站另有 MRT 入口）
+const EVENING_BUS = [
+    {
+        stationId: 'G07', stationName: '公館站',
+        boardStop: '基隆長興街口', walkFromDept: 5,
+        routes: [
+            { name: '1',   ride: 5, destStop: '捷運公館站' },
+            { name: '907', ride: 5, destStop: '捷運公館站' },
+            { name: '棕12', ride: 5, destStop: '捷運公館站' },
+            { name: '棕22', ride: 5, destStop: '捷運公館站' },
+            { name: '673', ride: 5, destStop: '捷運公館站' },
+        ],
+    },
+    {
+        stationId: 'G07', stationName: '公館站',
+        boardStop: '自來水事業處', walkFromDept: 1,
+        routes: [
+            { name: '綠11', ride: 6, destStop: '捷運公館站' },
+        ],
+    },
+    {
+        stationId: 'G08', stationName: '台電大樓站',
+        boardStop: '基隆長興街口', walkFromDept: 5,
+        routes: [
+            { name: '1',   ride: 9, destStop: '捷運台電大樓站' },
+            { name: '棕12', ride: 9, destStop: '捷運台電大樓站' },
+        ],
+    },
+    {
+        stationId: 'G09', stationName: '古亭站',
+        boardStop: '基隆長興街口', walkFromDept: 5,
+        routes: [
+            { name: '1', ride: 11, destStop: '捷運古亭站(杭州)' },
+        ],
+    },
+];
+
+// 回程：公館站 → 步行（舟山路）
+const EVENING_WALK_MRT = { stationId: 'G07', ride: 4.5 };
+
+// 公車車程「推估模式」備用等候（無即時資料時）
+const FALLBACK_BUS_WAIT = { '1': 8, '907': 10, '棕12': 12, '棕22': 15, '673': 15, '綠11': 15 };
+const FALLBACK_MRT_WAIT = 3;   // 尖峰平均候車（推估）
+
+/* ---------- 時間工具 ---------- */
+function timeToMin(str) {
+    if (!str) return 0;
+    const [h, m] = str.split(':').map(Number);
+    return h * 60 + m;
+}
+function minToTimeStr(min) {
+    const h = Math.floor(min / 60) % 24;
+    const m = Math.floor(min % 60);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+function setCurrentTimeInInput() {
+    const now = new Date();
+    document.getElementById('depTime').value =
+        `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+}
+function useCurrentTime() {
+    isAutoFollowNow = true;
+    setCurrentTimeInInput();
+    fetchLiveTransitData();
+}
+
+/* ---------- TDX 金鑰（選填，存本機） ---------- */
+function loadTdxKeys() {
+    try {
+        const k = JSON.parse(localStorage.getItem('tdx_keys') || '{}');
+        return { id: k.id || '', secret: k.secret || '' };
+    } catch (e) { return { id: '', secret: '' }; }
+}
+function saveTdxKeys() {
+    const id = document.getElementById('tdxClientId').value.trim();
+    const secret = document.getElementById('tdxClientSecret').value.trim();
+    if (!id || !secret) { setKeyStatus('⚠️ 兩個欄位都要填', true); return; }
+    localStorage.setItem('tdx_keys', JSON.stringify({ id, secret }));
+    localStorage.removeItem('tdx_token');   // 金鑰換了 → 舊 token 作廢
+    setKeyStatus('✅ 已儲存（只存在本機）。重新整理資料中…');
+    fetchLiveTransitData();
+}
+function clearTdxKeys() {
+    localStorage.removeItem('tdx_keys');
+    localStorage.removeItem('tdx_token');
+    document.getElementById('tdxClientId').value = '';
+    document.getElementById('tdxClientSecret').value = '';
+    setKeyStatus('🗑️ 已清除，改回免金鑰模式');
+    fetchLiveTransitData();
+}
+function setKeyStatus(msg, isErr) {
+    const el = document.getElementById('keyStatus');
+    el.textContent = msg;
+    el.style.color = isErr ? '#b02a2a' : '#8a6d1f';
+}
+function initKeyCard() {
+    const k = loadTdxKeys();
+    if (k.id) {
+        document.getElementById('tdxClientId').value = k.id;
+        document.getElementById('tdxClientSecret').value = '••••••••••••';
+        setKeyStatus('✅ 已設定金鑰（自動帶入，Secret 已隱藏）。');
     }
+}
 
-    function minToTimeStr(min) {
-        const h = Math.floor(min / 60) % 24;
-        const m = Math.floor(min % 60);
-        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-    }
+/* ---------- TDX 資料層 ---------- */
+const API_BASE = 'https://tdx.transportdata.tw/api/basic/v2';
 
-    function setCurrentTimeInInput() {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('depTime').value = `${hh}:${mm}`;
-    }
-
-    function useCurrentTime() {
-        isAutoFollowNow = true;
-        setCurrentTimeInInput();
-        fetchLiveTransitData();
-    }
-
-    function getRandomPlate() {
-        const prefix = ['EAL', 'KKA', 'FAB', 'FAD', 'EAA'][Math.floor(Math.random()*5)];
-        const num = Math.floor(Math.random()*8999) + 1000;
-        return `${prefix}-${num}`;
-    }
-
-    function switchCommuteTab(mode) {
-        currentMode = mode;
-        document.getElementById('tabMorning').classList.toggle('active', mode === 'morning');
-        document.getElementById('tabEvening').classList.toggle('active', mode === 'evening');
-
-        if (mode === 'morning') {
-            document.getElementById('headerTitle').innerText = '捷運小南門站 ➔ 台北自來水事業處';
-            document.getElementById('headerSub').innerText = '☀️ 上班去程 ｜ 精準計算地表出發與轉乘車次看板';
-            document.getElementById('depLabelText').innerText = '小南門4號出口地表到達時間：';
-            document.getElementById('footerNoteText').innerText = '已校正：地表至月台 3 分鐘 ｜ 基隆路長興街口至自來水處大門 5 分鐘';
-        } else {
-            document.getElementById('headerTitle').innerText = '台北自來水事業處 ➔ 農業部大門口';
-            document.getElementById('headerSub').innerText = '🌙 下班回程 ｜ 實時對算自來水處大門出發至農業部';
-            document.getElementById('depLabelText').innerText = '自來水事業處大門口出發時間：';
-            document.getElementById('footerNoteText').innerText = '已校正：處本部至基隆長興街口 5 分鐘 ｜ 中正紀念堂站/小南門站至農業部大門 5 分鐘';
-        }
-
-        fetchLiveTransitData();
-    }
-
-    async function fetchLiveTransitData() {
-        if (isAutoFollowNow) {
-            setCurrentTimeInInput();
-        }
-
-        const now = new Date();
-        document.getElementById('updateText').innerText = `現在出發時間：${now.toLocaleTimeString('zh-TW', {hour12:false})}`;
-
-        const depStr = document.getElementById('depTime').value;
-        const depMin = timeToMin(depStr);
-
-        const liveState = {
-            mrtWait: Math.floor(Math.random() * 3) + 2,
-            busWait: Math.floor(Math.random() * 4) + 2,
-            busPlate: getRandomPlate(),
-            mrtTrainNo: `0${Math.floor(Math.random()*8)+1}車次 (車號: 1${Math.floor(Math.random()*80)+10})`
-        };
-
-        try {
-            const busRes = await fetch('https://tcgbusfs.blob.core.windows.net/blobbus/GetEstimateTime.json', { cache: 'no-store' });
-            if (busRes.ok) {
-                const busData = await busRes.json();
-                if (busData && busData.BusInfo) {
-                    document.getElementById('sourceBadge').innerText = '🟢 已對接雙北實時 API (Data.Taipei 同步)';
-                }
-            }
-        } catch (e) {
-            document.getElementById('sourceBadge').innerText = '🟢 雙向實時對算法數據流';
-        }
-
-        calculateAndSort(liveState);
-    }
-
-    function calculateAndSort(liveState) {
-        const depStr = document.getElementById('depTime').value;
-        const walkCalib = parseFloat(document.getElementById('walkCalib').value);
-        const depMin = timeToMin(depStr);
-
-        const targetRoutes = currentMode === 'morning' ? morningRoutes : eveningRoutes;
-
-        const calculated = targetRoutes.map(r => {
-            let totalDuration = 0;
-            let vehicleDetails = [];
-
-            if (currentMode === 'morning') {
-                const wStart = Math.round(r.walkDownPlatform * walkCalib);
-                const wTransfer = Math.round((r.walkTransferToBus || 0) * walkCalib);
-                const wExit = Math.round((r.walkExitStation || 0) * walkCalib);
-                let wDest = Math.round(r.walkDestFromStop * walkCalib);
-
-                let mrtWait = liveState.mrtWait;
-                let mrtRide = Math.round(r.baseMrtRide);
-                let busWait = liveState.busWait;
-                let busRide = r.baseBusRide || 0;
-
-                const platformReachMin = depMin + wStart;
-                const mrtBoardMin = platformReachMin + mrtWait;
-
-                if (r.type === 'mrt-walk') {
-                    vehicleDetails.push({
-                        stepName: '① 捷運小南門站 (G11)',
-                        desc: `地表4號出口進入 ➔ 步行 3分抵達B2月台 (${minToTimeStr(platformReachMin)})`,
-                        vInfo: `搭乘：松山新店線 (往新店 ${liveState.mrtTrainNo})`,
-                        boardClock: `${minToTimeStr(mrtBoardMin)} 進站發車 (等候 ${mrtWait} 分)`
-                    });
-                } else if (r.type === 'mrt-bus') {
-                    vehicleDetails.push({
-                        stepName: '① 捷運小南門站 (G11)',
-                        desc: `地表4號出口進入 ➔ 步行 3分下至B2月台 (${minToTimeStr(platformReachMin)})`,
-                        vInfo: `搭乘：松山新店線 (往新店 ${liveState.mrtTrainNo})`,
-                        boardClock: `${minToTimeStr(mrtBoardMin)} 進站發車 (捷運車程 ${mrtRide}分)`
-                    });
-
-                    const mrtArrivalAtStationMin = depMin + wStart + mrtWait + mrtRide;
-                    const busStopReachMin = mrtArrivalAtStationMin + wTransfer;
-                    const busCatchMin = busStopReachMin + busWait;
-
-                    if (r.id === 'mrt-bus-gongguan') {
-                        const isGreen11 = Math.random() > 0.5;
-                        if (isGreen11) wDest = 1;
-                    }
-
-                    vehicleDetails.push({
-                        stepName: `② 轉乘公車 (${r.busStopName})`,
-                        desc: `捷運出站 ➔ 步行 ${wTransfer}分至【${r.busStopName}】 (${minToTimeStr(busStopReachMin)})`,
-                        vInfo: `搭乘：公車 ${r.busRouteName} (車牌: ${liveState.busPlate})`,
-                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (等候 ${busWait}分)`
-                    });
-                } else if (r.type === 'direct-bus') {
-                    const busStopReachMin = depMin + wTransfer;
-                    const busCatchMin = busStopReachMin + busWait;
-
-                    vehicleDetails.push({
-                        stepName: `① 公車站牌 (${r.busStopName})`,
-                        desc: `小南門4號出口地表 ➔ 步行 ${wTransfer}分至【${r.busStopName}】 (${minToTimeStr(busStopReachMin)})`,
-                        vInfo: `搭乘：${r.busRouteName} (車牌: ${liveState.busPlate})`,
-                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (等候 ${busWait}分)`
-                    });
-                }
-
-                totalDuration = wStart + mrtWait + mrtRide + wExit + wTransfer + busWait + busRide + wDest;
-            } else {
-                const wStart = Math.round(r.walkStartToStop * walkCalib);
-                const wTransfer = Math.round(r.walkTransferToMrt * walkCalib);
-                const wDest = Math.round(r.walkMrtToDest * walkCalib);
-
-                let busWait = liveState.busWait;
-                let busRide = r.baseBusRide || 0;
-                let mrtWait = liveState.mrtWait;
-                let mrtRide = Math.round(r.baseMrtRide || 0);
-
-                const busStopReachMin = depMin + wStart;
-
-                if (r.type === 'bus-mrt') {
-                    const busCatchMin = busStopReachMin + busWait;
-                    const busDropMin = busCatchMin + busRide;
-                    const mrtPlatformReachMin = busDropMin + wTransfer;
-                    const mrtBoardMin = mrtPlatformReachMin + mrtWait;
-
-                    vehicleDetails.push({
-                        stepName: `① 公車搭乘 (${r.busStopName})`,
-                        desc: `處本部大門 ➔ 步行 ${wStart}分至【${r.busStopName}】 (${minToTimeStr(busStopReachMin)})`,
-                        vInfo: `搭乘：公車 ${r.busRouteName} (車牌: ${liveState.busPlate})`,
-                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (車程 ${busRide}分)`
-                    });
-
-                    vehicleDetails.push({
-                        stepName: `② 轉乘捷運 (${r.mrtStation})`,
-                        desc: `下公車 ➔ 步行 ${wTransfer}分下至月台 (${minToTimeStr(mrtPlatformReachMin)})`,
-                        vInfo: `搭乘：松山新店線 (往松山 ${liveState.mrtTrainNo})`,
-                        boardClock: `${minToTimeStr(mrtBoardMin)} 進站發車 (捷運車程 ${mrtRide}分)`
-                    });
-                } else if (r.type === 'direct-bus') {
-                    const busCatchMin = busStopReachMin + busWait;
-
-                    vehicleDetails.push({
-                        stepName: `① 直達公車 (${r.busStopName})`,
-                        desc: `處本部大門 ➔ 步行 ${wStart}分至【${r.busStopName}】 (${minToTimeStr(busStopReachMin)})`,
-                        vInfo: `搭乘：${r.busRouteName} (車牌: ${liveState.busPlate})`,
-                        boardClock: `${minToTimeStr(busCatchMin)} 進站搭上 (公車車程 ${busRide}分)`
-                    });
-                } else if (r.type === 'mrt-walk') {
-                    const stationReachMin = depMin + wStart;
-                    const mrtBoardMin = stationReachMin + wTransfer + mrtWait;
-
-                    vehicleDetails.push({
-                        stepName: `① 捷運公館站 (3號出口)`,
-                        desc: `處本部大門 ➔ 穿越台大舟山路步行 ${wStart}分至公館站 (${minToTimeStr(stationReachMin)})`,
-                        vInfo: `搭乘：松山新店線 (往松山 ${liveState.mrtTrainNo})`,
-                        boardClock: `${minToTimeStr(mrtBoardMin)} 進站發車 (捷運車程 ${mrtRide}分)`
-                    });
-                }
-
-                totalDuration = wStart + busWait + busRide + wTransfer + mrtWait + mrtRide + wDest;
-            }
-
-            const arrMin = depMin + totalDuration;
-
-            return {
-                ...r,
-                vehicleDetails,
-                computed: {
-                    totalDuration,
-                    arrStr: minToTimeStr(arrMin)
-                }
-            };
+// 簡易快取（45 秒），避免每次刷新都打爆 API
+const cache = new Map();
+function cachedFetch(url, ttlMs = 45000) {
+    const hit = cache.get(url);
+    if (hit && Date.now() - hit.ts < ttlMs) return Promise.resolve(hit.data);
+    return doFetch(url).then(data => {
+        cache.set(url, { ts: Date.now(), data });
+        return data;
+    });
+}
+function doFetch(url) {
+    const keys = loadTdxKeys();
+    // 檢查回應：429 限流 / 401 需金鑰 / 非 JSON 都轉成明確錯誤
+    const parse = (res) => {
+        if (res.status === 429) throw new Error('API rate limit exceeded（限流）');
+        if (res.status === 401 || res.status === 403) throw new Error('Valid API key required（需金鑰）');
+        return res.text().then(t => {
+            try { return JSON.parse(t); } catch (e) { throw new Error(t.slice(0, 60)); }
         });
+    };
+    if (keys.id) {
+        // 金鑰模式：先取 OAuth token 再帶 Authorization
+        return getTdxToken().then(token =>
+            fetch(url, { headers: { 'Authorization': 'Bearer ' + token } }).then(parse)
+        );
+    }
+    // 免金鑰模式：直接打基礎服務（若成功最好；失敗會由呼叫端降級處理）
+    return fetch(url).then(parse);
+}
 
-        calculated.sort((a, b) => a.computed.totalDuration - b.computed.totalDuration);
+// OAuth token（24 小時有效，存在本機）
+function getTdxToken() {
+    const cached = localStorage.getItem('tdx_token');
+    if (cached) {
+        try {
+            const t = JSON.parse(cached);
+            if (t.exp > Date.now() + 60000) return Promise.resolve(t.token);
+        } catch (e) {}
+    }
+    const keys = loadTdxKeys();
+    const body = new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: keys.id,
+        client_secret: keys.secret,
+    });
+    return fetch('https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString(),
+    }).then(res => res.json()).then(j => {
+        if (!j.access_token) throw new Error('TDX token 取得失敗');
+        localStorage.setItem('tdx_token', JSON.stringify({
+            token: j.access_token,
+            exp: Date.now() + (j.expires_in - 60) * 1000,
+        }));
+        return j.access_token;
+    });
+}
 
-        renderUI(calculated, depStr);
+// 批次抓多條路線的即時到站（單一呼叫，符合 TDX 免費方案 5 次/分的限制）
+// 回傳 { 路線名: [ETA記錄...] }
+function fetchRoutesEta(routes) {
+    const filter = routes.map(r => `RouteName/Zh_tw eq '${r}'`).join(' or ');
+    const url = `${API_BASE}/Bus/EstimatedTimeOfArrival/City/Taipei?$filter=(${encodeURIComponent(filter)})&$top=1000&$format=JSON`;
+    return cachedFetch(url).then(arr => {
+        if (!Array.isArray(arr)) return {};
+        const byRoute = {};
+        arr.forEach(rec => {
+            const rn = (rec.RouteName || {}).Zh_tw;
+            if (!rn) return;
+            if (!byRoute[rn]) byRoute[rn] = [];
+            byRoute[rn].push(rec);
+        });
+        return byRoute;
+    });
+}
+
+// 單一路線即時到站（批次被拒絕時的退回方案）
+function fetchRouteEta(routeName) {
+    return fetchRoutesEta([routeName]).then(m => m[routeName] || []);
+}
+
+// 抓捷運即時看板（整包台北捷運，再自行篩選）
+function fetchLiveBoard() {
+    const url = `${API_BASE}/Rail/Metro/LiveBoard/TRTC?$format=JSON`;
+    return cachedFetch(url).then(arr => (Array.isArray(arr) ? arr : []));
+}
+
+/* ---------- 計算：找出「下一班能到的車」 ---------- */
+
+// 站牌名稱模糊比對（TDX 站名有時加括號備註）
+function stopMatch(actual, wanted) {
+    if (!actual || !wanted) return false;
+    if (actual === wanted) return true;
+    return actual.indexOf(wanted) >= 0 || wanted.indexOf(actual) >= 0;
+}
+
+// 從路線 ETA 資料中，找「上車站 → 下車站 同方向且順序正確」的班次
+// 回傳 { etaSec, plate, status } 或 null
+function findBusForRoute(etaArr, boardStop, destStop) {
+    if (!etaArr || !etaArr.length) return null;
+    const byDir = {};
+    etaArr.forEach(r => {
+        const d = r.Direction;
+        if (byDir[d] === undefined) byDir[d] = [];
+        byDir[d].push(r);
+    });
+    let best = null;
+    for (const d of Object.keys(byDir)) {
+        const rows = byDir[d];
+        // 先找「完全同名」的站；沒有才用模糊比對（避免「公館」誤配「捷運公館站」）
+        const pick = (wanted) => {
+            const exact = rows.filter(r => (r.StopName || {}).Zh_tw === wanted);
+            if (exact.length) return exact;
+            return rows.filter(r => stopMatch((r.StopName || {}).Zh_tw, wanted));
+        };
+        const boardList = pick(boardStop);
+        const destList = pick(destStop);
+        if (!boardList.length || !destList.length) continue;
+        // 取站序最小者（路線可能重複設站）
+        const board = boardList.reduce((a, b) => ((a.StopSequence || 0) <= (b.StopSequence || 0) ? a : b));
+        const dest = destList.reduce((a, b) => ((a.StopSequence || 0) <= (b.StopSequence || 0) ? a : b));
+        const bs = board.StopSequence || 0, ds = dest.StopSequence || 0;
+        if (bs >= ds) continue;                 // 方向不對（下車站在上車站前面）
+        const eta = board.EstimateTime;
+        if (typeof eta === 'number' && eta >= 0) {
+            if (!best || eta < best.etaSec) {
+                best = { etaSec: eta, plate: board.PlateNumb || '', status: board.StopStatus };
+            }
+        } else if (!best) {
+            // 尚未發車 / 無即時值 → 記為候補（推估）
+            best = { etaSec: null, plate: board.PlateNumb || '', status: board.StopStatus, nextBus: board.NextBusTime || null };
+        }
+    }
+    return best;
+}
+
+// 找「下一班 會停靠 targetStation 的順向列車」
+// dir: 'south'（往新店）| 'north'（往松山）
+// 回傳 { etaMin, destName } 或 null
+function findNextTrain(liveBoardArr, fromStationId, targetStationId, dir) {
+    if (!liveBoardArr || !liveBoardArr.length) return null;
+    const fromIdx = IDX[fromStationId], targetIdx = IDX[targetStationId];
+    let best = null;
+    for (const r of liveBoardArr) {
+        if (String(r.StationID) !== fromStationId) continue;
+        const line = r.LineID || '';
+        if (line !== 'GL') continue;                       // 只取松山新店線
+        const destId = r.DestinationStationID || r.DestinationStaionID || '';
+        const destIdx = IDX[destId];
+        if (destIdx === undefined) continue;
+        // 順向檢查：南向 dest 必須在 from 南邊；且要停到 target
+        if (dir === 'south') {
+            if (destIdx <= fromIdx) continue;              // 往北/折返 → 跳過
+            if (targetIdx > destIdx) continue;             // 到不了 target
+        } else {
+            if (destIdx >= fromIdx) continue;              // 往南 → 跳過
+            if (targetIdx < destIdx) continue;             // 到不了 target
+        }
+        const eta = r.EstimateTime;
+        if (typeof eta !== 'number' || eta < 0) continue;
+        const etaMin = eta / 60;
+        if (!best || etaMin < best.etaMin) {
+            const dn = r.DestinationStationName;
+            best = { etaMin, destName: (dn && dn.Zh_tw) || r.TripHeadSign || '' };
+        }
+    }
+    return best;
+}
+
+/* ---------- 主計算流程 ---------- */
+function getWalkCalib() {
+    return parseFloat(document.getElementById('walkCalib').value || '1');
+}
+function getDepMin() {
+    return timeToMin(document.getElementById('depTime').value);
+}
+
+// 產生「到達某站牌」的絕對時間（分鐘）
+function reachStopAt(depMin, walkParts) {
+    let t = depMin;
+    walkParts.forEach(p => { t += p * getWalkCalib(); });
+    return t;
+}
+
+// 班次可搭性：公車 ETA(秒) → 若你到站牌時車已走 → 回傳推估等待
+function busWaitFromEta(etaSec, stopReachMin, routeName) {
+    if (typeof etaSec === 'number' && etaSec >= 0) {
+        const busArriveMin = etaSec / 60;
+        if (busArriveMin >= stopReachMin - getDepMin()) {
+            return Math.max(0, busArriveMin - (stopReachMin - getDepMin())); // 需等待分鐘數
+        }
+        return null; // 錯過（車會先到）→ 標記
+    }
+    return (FALLBACK_BUS_WAIT[routeName] || 10); // 推估
+}
+
+async function computeMorning(nowMin, liveBoard, etaCache) {
+    const depMin = getDepMin();
+    const calib = getWalkCalib();
+    const results = [];
+
+    // 下一班南下列車（小南門 G11 → 各轉乘站）
+    const nextTrains = {};
+    MORNING_STATIONS.forEach(st => {
+        nextTrains[st.id] = findNextTrain(liveBoard, 'G11', st.id, 'south');
+    });
+
+    // A) 捷運 → 公車 組合
+    for (let gi = 0; gi < MORNING_BUS.length; gi++) {
+        const grp = MORNING_BUS[gi];
+        const st = MORNING_STATIONS.find(s => s.id === grp.stationId);
+        const train = nextTrains[grp.stationId];
+        const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
+        const mrtIsEst = !train;
+
+        const boardTime = depMin + WALK.surfaceToPlatform * calib + mrtWait;
+        const mrtArrive = boardTime + st.ride;
+        const busStopReach = mrtArrive + WALK.exitToBus * calib;
+
+        for (const route of grp.routes) {
+            const etaArr = etaCache[route.name] || [];
+            const b = findBusForRoute(etaArr, grp.boardStop, route.dest);
+            let wait;
+            let missed = false, est = mrtIsEst;
+            if (b && typeof b.etaSec === 'number' && b.etaSec >= 0) {
+                const busArriveRel = b.etaSec / 60; // 從「現在」起算
+                const stopReachRel = busStopReach - nowMin;
+                if (busArriveRel >= stopReachRel) {
+                    wait = busArriveRel - stopReachRel;
+                } else {
+                    missed = true;
+                    wait = FALLBACK_BUS_WAIT[route.name] || 10;
+                    est = true;
+                }
+            } else {
+                wait = FALLBACK_BUS_WAIT[route.name] || 10;
+                est = true;
+            }
+            const arrive = busStopReach + wait + route.ride + route.destWalk * calib;
+            results.push({
+                type: 'mrt-bus',
+                grpIndex: gi,
+                cardTitle: `🚇 ${st.name}${st.exit} ➔ 🚌 ${route.name} 公車`,
+                routeLabel: route.name,
+                desc: `捷運小南門站（G11）搭 ${st.ride} 分到${st.name} → ${route.name} 搭 ${route.ride} 分到【${route.dest}】→ 步行 ${route.destWalk} 分到大門`,
+                total: arrive - depMin,
+                arrive,
+                est,
+                missed,
+                steps: [
+                    { name: '① 捷運 小南門站 (G11)', info: `地表4號出口 ➔ 步行 ${WALK.surfaceToPlatform * calib} 分到月台（${minToTimeStr(depMin + WALK.surfaceToPlatform * calib)}）` + (train ? `｜南下列車 ${Math.round(mrtWait)} 分後到（往${train.destName}）` : '｜推估候車 3 分'), clock: `${minToTimeStr(boardTime)} 進站發車` },
+                    { name: `② 捷運到 ${st.name}`, info: `車程 ${st.ride} 分｜${minToTimeStr(mrtArrive)} 抵達`, clock: `${minToTimeStr(mrtArrive + WALK.exitToBus * calib)} 到${grp.boardStop}站牌` },
+                    { name: `③ 公車 ${route.name}`, info: `於【${grp.boardStop}】上車${b && b.plate ? '（車牌 ' + b.plate + '）' : ''}｜車程 ${route.ride} 分｜下車【${route.dest}】`, clock: missed ? `❌ 錯過（${minToTimeStr(busStopReach + wait)} 搭下一班推估）` : `${minToTimeStr(busStopReach + wait)} 搭上${est ? '（推估）' : ''}` },
+                ],
+                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
+            });
+        }
     }
 
-    function renderUI(routes, depStr) {
-        const container = document.getElementById('routesApp');
-        let html = '';
+    // B) 植物園直達公車
+    {
+        const walkT = depMin + MORNING_DIRECT.walkFromExit * calib;
+        for (const route of MORNING_DIRECT.routes) {
+            const etaArr = etaCache[route.name] || [];
+            const b = findBusForRoute(etaArr, MORNING_DIRECT.boardStop, route.dest);
+            let wait, missed = false, est = false;
+            if (b && typeof b.etaSec === 'number' && b.etaSec >= 0) {
+                const busArriveRel = b.etaSec / 60;
+                const stopReachRel = walkT - depMin;
+                if (busArriveRel >= stopReachRel) wait = busArriveRel - stopReachRel;
+                else { missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
+            } else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
+            const arrive = walkT + wait + route.ride + route.destWalk * calib;
+            results.push({
+                type: 'direct',
+                grpIndex: -1,
+                cardTitle: `🚌 ${route.name} 直達（植物園站牌，免換捷運）`,
+                routeLabel: route.name,
+                desc: `小南門4號出口 ➔ 步行 ${MORNING_DIRECT.walkFromExit * calib} 分到【植物園】→ ${route.name} 搭 ${route.ride} 分直達【${route.dest}】→ 步行 ${route.destWalk} 分`,
+                total: arrive - depMin, arrive, est, missed,
+                steps: [
+                    { name: '① 步行到植物園站牌', info: `${minToTimeStr(walkT)} 抵達【${MORNING_DIRECT.boardStop}】`, clock: `${minToTimeStr(walkT + wait)} 搭上${est ? '（推估）' : ''}` },
+                    { name: `② 公車 ${route.name} 直達`, info: `車程 ${route.ride} 分｜下車【${route.dest}】`, clock: `${minToTimeStr(arrive - route.destWalk * calib)} 下車` },
+                ],
+                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
+            });
+        }
+    }
 
-        const startLocName = currentMode === 'morning' ? '地表到達' : '處本部出發';
-        const destLocName = currentMode === 'morning' ? '預計抵達處本部' : '預計抵達農業部';
+    // C) 捷運公館站 → 步行舟山路
+    {
+        const st = MORNING_WALK_MRT;
+        const train = nextTrains['G07'];
+        const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
+        const boardTime = depMin + WALK.surfaceToPlatform * calib + mrtWait;
+        const arrive = boardTime + st.ride + WALK.gongguanExit * calib + WALK.boatShanWalk * calib;
+        results.push({
+            type: 'mrt-walk',
+            grpIndex: -1,
+            cardTitle: `🚶 公館站3號出口 ➔ 台大舟山路步行`,
+            routeLabel: '步行',
+            desc: `穿越台大校園（舟山路）約 ${WALK.boatShanWalk} 分，零塞車、時間最穩定`,
+            total: arrive - depMin, arrive, est: !train, missed: false,
+            steps: [
+                { name: '① 捷運 小南門站 (G11)', info: `南下 ${Math.round(mrtWait)} 分後發車${train ? '（往' + train.destName + '）' : '（推估）'}｜車程 ${st.ride} 分`, clock: `${minToTimeStr(boardTime)} 進站` },
+                { name: '② 步行（台大舟山路）', info: `${minToTimeStr(arrive - WALK.boatShanWalk * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
+            ],
+            bestBusRow: null,
+        });
+    }
 
-        routes.forEach((r, idx) => {
-            const c = r.computed;
-            const rank = idx + 1;
+    // D) 全程步行（基準線）
+    {
+        const arrive = depMin + WALK.walkOnly * calib;
+        results.push({
+            type: 'walk',
+            grpIndex: -1,
+            cardTitle: `🚶‍♀️ 全程步行（約 ${Math.round(WALK.walkOnly * calib)} 分）`,
+            routeLabel: '步行',
+            desc: '中華路 → 和平西路 → 羅斯福路 → 基隆路，約 3.6 公里。僅供基準參考。',
+            total: arrive - depMin, arrive, est: false, missed: false,
+            steps: [],
+            bestBusRow: null,
+        });
+    }
 
-            let rankClass = rank === 1 ? 'best' : '';
-            let rankText = rank === 1 ? '★ 耗時最短' : `第 ${rank} 名`;
+    return results;
+}
 
-            let boardHtml = '<div class="vehicle-board">';
-            r.vehicleDetails.forEach(v => {
+async function computeEvening(nowMin, liveBoard, etaCache) {
+    const depMin = getDepMin();
+    const calib = getWalkCalib();
+    const results = [];
+
+    // 回程目標：中正紀念堂站 (G10) 轉步行到農業部
+    const TARGET = 'G10';
+
+    // 北向列車（自來水處 → 各捷運站 → 中正紀念堂）
+    const nextTrains = {};
+    EVENING_STATIONS.forEach(st => {
+        nextTrains[st.id] = findNextTrain(liveBoard, st.id, TARGET, 'north');
+    });
+
+    for (let gi = 0; gi < EVENING_BUS.length; gi++) {
+        const grp = EVENING_BUS[gi];
+        const st = EVENING_STATIONS.find(s => s.id === grp.stationId);
+        const walkT = depMin + (grp.walkFromDept || 5) * calib;
+        for (const route of grp.routes) {
+            const etaArr = etaCache[route.name] || [];
+            const b = findBusForRoute(etaArr, grp.boardStop, route.destStop);
+            let wait, missed = false, est = false;
+            if (b && typeof b.etaSec === 'number' && b.etaSec >= 0) {
+                const busArriveRel = b.etaSec / 60;
+                const stopReachRel = walkT - depMin;
+                if (busArriveRel >= stopReachRel) wait = busArriveRel - stopReachRel;
+                else { missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
+            } else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
+
+            // 公車 → 捷運站
+            const busDrop = walkT + wait + route.ride;
+            const train = nextTrains[st.id];
+            const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
+            const boardTime = busDrop + WALK.exitToBus * calib + mrtWait;
+            const arrive = boardTime + st.ride + WALK.toAgriculture * calib;
+            results.push({
+                type: 'bus-mrt',
+                grpIndex: gi,
+                cardTitle: `🚌 ${route.name} ➔ 🚇 ${st.name} ➔ 中正紀念堂站`,
+                routeLabel: route.name,
+                desc: `步行 ${grp.walkFromDept} 分到【${grp.boardStop}】→ ${route.name} 搭 ${route.ride} 分到【${route.destStop}】→ 捷運北向 ${st.ride} 分到中正紀念堂 → 步行 ${WALK.toAgriculture} 分到農業部`,
+                total: arrive - depMin, arrive, est: est || !train, missed,
+                steps: [
+                    { name: '① 公車上車', info: `【${grp.boardStop}】${b && b.plate ? '（車牌 ' + b.plate + '）' : ''}｜車程 ${route.ride} 分到【${route.destStop}】`, clock: missed ? `❌ 錯過（${minToTimeStr(busDrop)} 後推估）` : `${minToTimeStr(walkT + wait)} 搭上${est ? '（推估）' : ''}` },
+                    { name: `② 捷運 ${st.name} 北向`, info: `${train ? '北向列車 ' + Math.round(mrtWait) + ' 分後到' : '推估候車 3 分'}｜車程 ${st.ride} 分`, clock: `${minToTimeStr(boardTime)} 進站` },
+                    { name: '③ 步行到農業部', info: `${minToTimeStr(arrive - WALK.toAgriculture * calib)} 抵達中正紀念堂站 ➔ 步行 ${WALK.toAgriculture} 分`, clock: `${minToTimeStr(arrive)} 抵達農業部大門` },
+                ],
+                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
+            });
+        }
+    }
+
+    // 回程步行方案：公館站步行（舟山路）
+    {
+        const st = EVENING_WALK_MRT;
+        const train = nextTrains['G07'];
+        const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
+        const walkT = depMin + WALK.boatShanWalk * calib;
+        const boardTime = walkT + WALK.gongguanExit * calib + mrtWait;
+        const arrive = boardTime + st.ride + WALK.toAgriculture * calib;
+        results.push({
+            type: 'walk-mrt',
+            grpIndex: -1,
+            cardTitle: `🚶 台大舟山路 ➔ 捷運公館站`,
+            routeLabel: '步行',
+            desc: `從處本部走舟山路 ${WALK.boatShanWalk} 分到公館站 → 捷運北向 → 中正紀念堂 → 農業部`,
+            total: arrive - depMin, arrive, est: !train, missed: false,
+            steps: [
+                { name: '① 步行（舟山路）', info: `${minToTimeStr(walkT)} 到公館站3號出口`, clock: `${minToTimeStr(walkT + WALK.gongguanExit * calib)} 進站` },
+                { name: '② 捷運 公館站 北向', info: `車程 ${st.ride} 分｜往中正紀念堂`, clock: `${minToTimeStr(boardTime)} 發車` },
+            ],
+            bestBusRow: null,
+        });
+    }
+
+    return results;
+}
+
+/* ---------- UI 呈現 ---------- */
+function switchCommuteTab(mode) {
+    currentMode = mode;
+    document.getElementById('tabMorning').classList.toggle('active', mode === 'morning');
+    document.getElementById('tabEvening').classList.toggle('active', mode === 'evening');
+
+    if (mode === 'morning') {
+        document.getElementById('headerTitle').innerText = '捷運小南門站 ➔ 台北自來水事業處';
+        document.getElementById('headerSub').innerText = '☀️ 上班去程 ｜ 精準計算地表出發與轉乘車次看板';
+        document.getElementById('depLabelText').innerText = '小南門4號出口地表到達時間：';
+        document.getElementById('footerNoteText').innerText = '已校正：地表至月台 3 分鐘 ｜ 基隆路長興街口至自來水處大門 5 分鐘 ｜ 植物園站牌步行 4 分鐘';
+    } else {
+        document.getElementById('headerTitle').innerText = '台北自來水事業處 ➔ 農業部大門口';
+        document.getElementById('headerSub').innerText = '🌙 下班回程 ｜ 實時對算自來水處大門出發至農業部';
+        document.getElementById('depLabelText').innerText = '自來水事業處大門口出發時間：';
+        document.getElementById('footerNoteText').innerText = '已校正：處本部至基隆長興街口 5 分鐘 ｜ 中正紀念堂站至農業部大門 5 分鐘';
+    }
+    fetchLiveTransitData();
+}
+
+function setStatus(text, mode) {
+    const bar = document.getElementById('statusBar');
+    const dot = document.getElementById('liveDot');
+    bar.className = 'status-bar' + (mode === 'est' ? ' est' : mode === 'err' ? ' err' : '');
+    dot.className = 'live-dot' + (mode === 'est' ? ' est' : mode === 'err' ? ' err' : '');
+    document.getElementById('updateText').innerText = text;
+}
+
+function fmtEta(etaSec) {
+    if (etaSec === null || etaSec === undefined) return '推估';
+    if (etaSec <= 0) return '進站中';
+    if (etaSec < 60) return '1 分內';
+    return `${Math.ceil(etaSec / 60)} 分`;
+}
+
+function renderUI(results, depStr, etaCache) {
+    const container = document.getElementById('routesApp');
+    etaCache = etaCache || {};
+    if (!results || !results.length) {
+        container.innerHTML = '<div class="setting-card" style="text-align:center;color:#888;">⚠️ 暫時無法取得資料，請稍後再試或檢查網路</div>';
+        return;
+    }
+
+    results.sort((a, b) => a.total - b.total);
+    const best = results[0];
+    const startLocName = currentMode === 'morning' ? '地表到達' : '處本部出發';
+    const destLocName = currentMode === 'morning' ? '預計抵達處本部' : '預計抵達農業部';
+
+    let html = '';
+
+    // 全場最快組合橫幅
+    html += `
+    <div class="overall-best">
+        <div class="ob-title">🏆 目前最快組合</div>
+        <div class="ob-main">${best.cardTitle} ${best.missed ? '（⚠️ 需等下一班）' : ''}</div>
+        <div class="ob-sub">${Math.round(best.total)} 分鐘 ｜ ${minToTimeStr(best.arrive)} 抵達${best.est ? ' ｜ ⚠️ 部分時段為推估值' : ' ｜ 全即時'}</div>
+    </div>`;
+
+    results.forEach((r, idx) => {
+        const rank = idx + 1;
+        const rankClass = rank === 1 ? 'best' : '';
+        const rankText = rank === 1 ? '★ 耗時最短' : `第 ${rank} 名`;
+        const estTag = r.est ? '<span style="color:#a05a00;font-size:0.75rem;">⚠️ 含推估</span>' : '<span style="color:#28a745;font-size:0.75rem;">● 即時</span>';
+
+        let boardHtml = '';
+        if (r.steps && r.steps.length) {
+            boardHtml = '<div class="vehicle-board">';
+            r.steps.forEach(v => {
                 boardHtml += `
                     <div class="vehicle-item">
                         <div class="v-header">
-                            <span class="v-name">${v.stepName}</span>
-                            <span class="v-time">${v.boardClock}</span>
+                            <span class="v-name">${v.name}</span>
+                            <span class="v-time ${r.est ? 'est' : ''}">${v.clock}</span>
                         </div>
-                        <div class="v-sub">${v.desc}</div>
-                        <div class="v-sub" style="font-weight:600; color:#0052cc;">${v.vInfo}</div>
-                    </div>
-                `;
+                        <div class="v-sub">${v.info}</div>
+                    </div>`;
             });
             boardHtml += '</div>';
+        }
 
-            html += `
-            <div class="route-card ${rank === 1 ? 'rank-1' : ''}">
-                <div class="card-header-bar">
-                    <div class="route-title">${r.title}</div>
-                    <span class="rank-badge ${rankClass}">${rankText}</span>
-                </div>
+        // 公車候選列（同站其他路線，顯示即時 ETA）
+        let busRowsHtml = '';
+        const busGroup = (r.type === 'mrt-bus' || r.type === 'bus-mrt') && r.grpIndex >= 0
+            ? (currentMode === 'morning' ? MORNING_BUS[r.grpIndex] : EVENING_BUS[r.grpIndex])
+            : null;
+        const directGroup = currentMode === 'morning' && r.type === 'direct' ? MORNING_DIRECT : null;
+        const allRoutes = busGroup ? busGroup.routes : (directGroup ? directGroup.routes : []);
+        const boardStopName = busGroup ? busGroup.boardStop : (directGroup ? directGroup.boardStop : '');
+        if (allRoutes.length) {
+            busRowsHtml = '<div class="bus-rows">';
+            allRoutes.forEach(rt => {
+                const isBest = rt.name === r.routeLabel;
+                const rowClass = isBest ? 'bus-row best-row' : 'bus-row';
+                // 每條路線目前的即時 ETA（同站同方向）
+                let rowEta = '—';
+                let rowDetail = '';
+                if (busGroup) {
+                    const destName = rt.dest || rt.destStop || '捷運' + busGroup.stationName;
+                    rowDetail = `→ ${destName}${rt.destWalk ? '｜步行' + rt.destWalk + '分' : ''}`;
+                    const b = findBusForRoute(etaCache[rt.name] || [], boardStopName, rt.destStop || rt.dest || '捷運公館站');
+                    rowEta = b && typeof b.etaSec === 'number' && b.etaSec >= 0 ? fmtEta(b.etaSec) : '推估';
+                } else if (directGroup) {
+                    rowDetail = `→ ${rt.dest}｜步行${rt.destWalk}分`;
+                    const b = findBusForRoute(etaCache[rt.name] || [], boardStopName, rt.dest);
+                    rowEta = b && typeof b.etaSec === 'number' && b.etaSec >= 0 ? fmtEta(b.etaSec) : '推估';
+                }
+                busRowsHtml += `<div class="${rowClass}">
+                    <span class="br-name">${rt.name}</span>
+                    <span class="br-info">${rowDetail}</span>
+                    <span class="br-eta ${isBest ? 'ok' : ''}">${isBest ? '✓ 此組合 ' : ''}${rowEta}</span>
+                </div>`;
+            });
+            busRowsHtml += '</div>';
+        }
 
-                ${boardHtml}
-
-                <div class="time-display-grid">
-                    <div>
-                        <div class="time-box-title">${startLocName}</div>
-                        <div class="time-box-num">${depStr}</div>
-                    </div>
-                    <div>
-                        <div class="time-box-title">實時總耗時</div>
-                        <div class="time-box-num primary">${c.totalDuration} 分</div>
-                    </div>
-                    <div>
-                        <div class="time-box-title">${destLocName}</div>
-                        <div class="time-box-num green">${c.arrStr}</div>
-                    </div>
-                </div>
-
-                <p style="font-size:0.85rem; color:#555; margin-bottom:6px;">${r.desc}</p>
+        html += `
+        <div class="route-card ${rank === 1 ? 'rank-1' : ''}">
+            <div class="card-header-bar">
+                <div class="route-title">${r.cardTitle}</div>
+                <span class="rank-badge ${rankClass}">${rankText}</span>
             </div>
-            `;
-        });
-
-        container.innerHTML = html;
-    }
-
-    document.getElementById('depTime').addEventListener('change', () => {
-        isAutoFollowNow = false;
-        fetchLiveTransitData();
+            ${boardHtml}
+            ${busRowsHtml}
+            <div class="time-display-grid">
+                <div>
+                    <div class="time-box-title">${startLocName}</div>
+                    <div class="time-box-num">${depStr}</div>
+                </div>
+                <div>
+                    <div class="time-box-title">實時總耗時</div>
+                    <div class="time-box-num primary">${Math.round(r.total)} 分 ${estTag}</div>
+                </div>
+                <div>
+                    <div class="time-box-title">${destLocName}</div>
+                    <div class="time-box-num green">${minToTimeStr(r.arrive)}</div>
+                </div>
+            </div>
+            <p style="font-size:0.85rem; color:#555; margin-bottom:6px;">${r.desc}</p>
+        </div>`;
     });
-    document.getElementById('walkCalib').addEventListener('change', fetchLiveTransitData);
 
-    setCurrentTimeInInput();
-    setInterval(fetchLiveTransitData, 10000);
+    container.innerHTML = html;
+}
+
+/* ---------- 主流程：抓即時資料 → 計算 → 排序呈現 ---------- */
+let lastFetchTs = 0;
+async function fetchLiveTransitData() {
+    // 手動刷新節流：至少間隔 15 秒（TDX 免費方案 5 次/分）
+    const nowMs = Date.now();
+    if (nowMs - lastFetchTs < 15000 && lastFetchTs !== 0) {
+        setStatus(`⏳ 刷新太頻繁（TDX 免費方案限 5 次/分），請 ${Math.ceil((15000 - (nowMs - lastFetchTs)) / 1000)} 秒後再試`, 'est');
+        return;
+    }
+    lastFetchTs = nowMs;
+    if (isAutoFollowNow) setCurrentTimeInInput();
+    const now = new Date();
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    const depStr = document.getElementById('depTime').value;
+
+    setStatus(`現在時間 ${now.toLocaleTimeString('zh-TW', { hour12: false })} ｜ 抓取 TDX 即時資料中…`, '');
+    document.getElementById('sourceBadge').innerText = 'TDX 即時 API';
+
+    try {
+        let anyLive = false;
+
+        // 1) 捷運即時看板（一次抓整包）
+        let liveBoard = [];
+        try { liveBoard = await fetchLiveBoard(); } catch (e) {}
+
+        // 2) 依目前分頁抓公車路線（一次批次呼叫，符合 5 次/分限制）
+        const routeNames = currentMode === 'morning'
+            ? [...new Set(MORNING_BUS.flatMap(g => g.routes.map(r => r.name)).concat(MORNING_DIRECT.routes.map(r => r.name)))]
+            : [...new Set(EVENING_BUS.flatMap(g => g.routes.map(r => r.name)))];
+        const etaCache = {};
+        let authFail = false;
+        try {
+            const batch = await fetchRoutesEta(routeNames);
+            let anyInBatch = false;
+            routeNames.forEach(rn => { etaCache[rn] = batch[rn] || []; if (etaCache[rn].length) anyInBatch = true; });
+            anyLive = anyInBatch;
+            if (!anyInBatch) {
+                // 批次可能被 TDX 拒絕 → 退回逐路線抓取
+                for (const rn of routeNames) {
+                    try {
+                        const arr = await fetchRouteEta(rn);
+                        if (arr.length) { anyLive = true; etaCache[rn] = arr; }
+                    } catch (e) {
+                        if (/限流|需金鑰|Valid API/i.test((e && e.message) || '')) authFail = true;
+                    }
+                    await sleep(350);
+                }
+            }
+        } catch (e) {
+            if (/限流|需金鑰|Valid API/i.test((e && e.message) || '')) authFail = true;
+        }
+
+        // 3) 計算 + 呈現
+        const results = currentMode === 'morning'
+            ? await computeMorning(nowMin, liveBoard, etaCache)
+            : await computeEvening(nowMin, liveBoard, etaCache);
+
+        if (anyLive) {
+            setStatus(`✅ 即時資料已更新（${now.toLocaleTimeString('zh-TW', { hour12: false })}）`, '');
+            document.getElementById('sourceBadge').innerText = '🟢 TDX 即時';
+        } else if (authFail) {
+            setStatus('🔑 免金鑰模式被限流／需金鑰 → 請在上方「🔑 TDX 金鑰設定」填入免費金鑰後按儲存', 'err');
+            document.getElementById('sourceBadge').innerText = '🔑 需金鑰';
+            const kc = document.getElementById('keyCard');
+            if (kc && typeof kc.open === 'function') kc.open = true;
+        } else {
+            setStatus(`⚠️ 目前為推估模式（即時 API 暫時無回應，每 60 秒自動重試）`, 'est');
+            document.getElementById('sourceBadge').innerText = '🟡 推估模式';
+        }
+        // 出發時間不是「現在」時提醒（公車 ETA 以現在時刻推算）
+        const depMinNow = timeToMin(document.getElementById('depTime').value);
+        if (Math.abs(depMinNow - nowMin) > 2) {
+            setStatus(`⏰ 出發時間 ${minToTimeStr(depMinNow)} ≠ 現在 ${minToTimeStr(nowMin)}（公車到站以現在推算）`, 'est');
+        }
+        renderUI(results, depStr, etaCache);
+    } catch (e) {
+        const msg = (e && e.message) || String(e);
+        const needsKey = /401|403|Valid API|invalid/i.test(msg);
+        setStatus(needsKey
+            ? '🔑 TDX 需要金鑰（或已達免金鑰限流）→ 請在上方「🔑 TDX 金鑰設定」填入免費金鑰'
+            : `❌ 連線失敗：${msg}（顯示推估資料）`, 'err');
+        document.getElementById('sourceBadge').innerText = needsKey ? '🔑 需金鑰' : '🔴 連線失敗';
+        if (needsKey) {
+            const kc = document.getElementById('keyCard');
+            if (kc && typeof kc.open === 'function') kc.open = true;
+        }
+        const results = currentMode === 'morning'
+            ? await computeMorning(nowMin, [], {})
+            : await computeEvening(nowMin, [], {});
+        renderUI(results, depStr, {});
+    }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ---------- 事件綁定與啟動 ---------- */
+document.getElementById('depTime').addEventListener('change', () => {
+    isAutoFollowNow = false;
     fetchLiveTransitData();
+});
+document.getElementById('walkCalib').addEventListener('change', fetchLiveTransitData);
+
+initKeyCard();
+setCurrentTimeInInput();
+setInterval(fetchLiveTransitData, 60000);   // 每 60 秒自動刷新
+fetchLiveTransitData();
 </script>
 
 </body>
