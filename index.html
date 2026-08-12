@@ -587,7 +587,6 @@ const MORNING_WALK_MRT = { stationId: 'G07', ride: 6.5 };
 // 龍山寺站(BL10)可搭 907/1 直達長興街口；板南線 1 站到西門轉松山新店線
 const MORNING_GUILIN = {
     boardStop: '捷運龍山寺站',
-    walkFromExit: 12,          // 桂林路(環河下車處) → 龍山寺站（OSRM 930m）
     guilin673Stop: '桂林路',
     walkToGuilinStop: 8,       // 桂林路 → 桂林路站牌（673 上車點）
     direct: [                  // 龍山寺站直達（車程推估：植物園→長興街口 13~14 分 + 早 3 站 ≈ 4 分）
@@ -983,18 +982,7 @@ function reachStopAt(depMin, walkParts) {
     return t;
 }
 
-// 班次可搭性：公車 ETA(秒) → 若你到站牌時車已走 → 回傳推估等待
-function busWaitFromEta(etaSec, stopReachMin, routeName) {
-    if (typeof etaSec === 'number' && etaSec >= 0) {
-        const busArriveMin = etaSec / 60;
-        if (busArriveMin >= stopReachMin - getDepMin()) {
-            return Math.max(0, busArriveMin - (stopReachMin - getDepMin())); // 需等待分鐘數
-        }
-        return null; // 錯過（車會先到）→ 標記
-    }
-    return (FALLBACK_BUS_WAIT[routeName] || 10); // 推估
-}
-
+/* ---------- 主計算流程 ---------- */
 async function computeMorning(nowMin, sched, etaCache) {
     const depMin = getDepMin();
     const calib = getWalkCalib();
@@ -1108,17 +1096,17 @@ async function computeMorning(nowMin, sched, etaCache) {
         const train = nextTrains['G07'];
         const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
         const boardTime = depMin + WALK.surfaceToPlatform * calib + mrtWait;
-        const arrive = boardTime + st.ride + WALK.gongguanExit * calib + WALK.boatShanWalk * calib;
+        const arrive = boardTime + st.ride + WALK.gongguanExit * calib + WALK.boatShanWalk * calib + WALK.destFromChangxing * calib;
         results.push({
             type: 'mrt-walk',
             grpIndex: -1,
             cardTitle: `🚶 公館站3號出口 ➔ 台大舟山路步行`,
             routeLabel: '步行',
-            desc: `穿越台大校園（舟山路）約 ${WALK.boatShanWalk} 分，零塞車、時間最穩定`,
+            desc: `穿越台大校園（舟山路）約 ${WALK.boatShanWalk} 分到基隆長興街口 ＋ 步行 ${WALK.destFromChangxing} 分到大門，零塞車、時間最穩定`,
             total: arrive - depMin, arrive, est: !train, missed: false,
             steps: [
                 { name: '① 捷運 小南門站 (G11)', info: `南下 ${Math.round(mrtWait)} 分後發車${train ? '（往' + train.destName + '）' : '（推估）'}｜車程 ${st.ride} 分`, clock: `${minToTimeStr(boardTime)} 進站` },
-                { name: '② 步行（台大舟山路）', info: `${minToTimeStr(arrive - WALK.boatShanWalk * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
+                { name: '② 步行（台大舟山路＋長興街）', info: `${minToTimeStr(arrive - WALK.boatShanWalk * calib - WALK.destFromChangxing * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分到長興街口 ➔ 再步行 ${WALK.destFromChangxing} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
             ],
             bestBusRow: null,
         });
@@ -1150,7 +1138,7 @@ async function computeMorning(nowMin, sched, etaCache) {
                 desc: `環河快下桂林路 ➔ 步行 ${Math.round(WALK.guilinToLonshan * calib)} 分到【${guilin.boardStop}】→ ${route.name} 搭 ${route.ride} 分直達【${route.dest}】→ 步行 ${route.destWalk} 分（免換乘，走路較多）`,
                 total: arrive - depMin, arrive, est, missed,
                 steps: [
-                    { name: '① 步行到捷運龍山寺站', info: `桂林路下車 ➔ 步行 ${Math.round(WALK.guilinToLonshan * calib)} 分（930m 實測）`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
+                    { name: '① 步行到捷運龍山寺站', info: `桂林路下車 ➔ 步行 ${Math.round(WALK.guilinToLonshan * calib)} 分（Google Maps 實測）`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
                     { name: `② 公車 ${route.name} 直達`, info: `車程 ${route.ride} 分｜下車【${route.dest}】`, clock: `${minToTimeStr(walkLonshanT + wait)} 搭上${est ? '（推估）' : ''}` },
                 ],
                 bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
@@ -1198,7 +1186,7 @@ async function computeMorning(nowMin, sched, etaCache) {
         const gongguanArrive = gBoard + guilin.mrt.gRide;                          // 到公館
         // F1) 公館 → 舟山路步行
         {
-            const arrive = gongguanArrive + WALK.gongguanExit * calib + WALK.boatShanWalk * calib;
+            const arrive = gongguanArrive + WALK.gongguanExit * calib + WALK.boatShanWalk * calib + WALK.destFromChangxing * calib;
             results.push({
                 type: 'guilin-mrt', grpIndex: 0, routeLabel: '步行',
                 cardTitle: `🚗 桂林路 ➔ 🚇 板南線→松山新店線 ➔ 🚶 舟山路`,
@@ -1208,7 +1196,7 @@ async function computeMorning(nowMin, sched, etaCache) {
                     { name: '① 步行到龍山寺站', info: `${Math.round(WALK.guilinToLonshan * calib)} 分`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
                     { name: '② 板南線 龍山寺→西門', info: `${blTrain ? '下一班 ' + Math.round(blWait) + ' 分後（往' + blTrain.destName + '）' : '推估候車'}｜車程 2 分`, clock: `${minToTimeStr(blBoard)} 發車` },
                     { name: '③ 轉乘 松山新店線', info: `西門站轉乘步行 ${WALK.transferXimen} 分${gTrain ? '｜下一班 ' + Math.round(gWait) + ' 分後（往' + gTrain.destName + '）' : ''}｜車程 10 分`, clock: `${minToTimeStr(gBoard)} 發車` },
-                    { name: '④ 舟山路步行', info: `${minToTimeStr(gongguanArrive + WALK.gongguanExit * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
+                    { name: '④ 舟山路＋長興街步行', info: `${minToTimeStr(gongguanArrive + WALK.gongguanExit * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分到長興街口 ➔ 再步行 ${WALK.destFromChangxing} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
                 ],
                 bestBusRow: null,
             });
@@ -1328,7 +1316,7 @@ async function computeEvening(nowMin, sched, etaCache) {
         const st = EVENING_WALK_MRT;
         const train = nextTrains['G07'];
         const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-        const walkT = depMin + WALK.boatShanWalk * calib;
+        const walkT = depMin + (WALK.destFromChangxing + WALK.boatShanWalk) * calib;
         const boardTime = walkT + WALK.gongguanExit * calib + mrtWait;
         const arrive = boardTime + st.ride + WALK.toAgriculture * calib;
         results.push({
@@ -1336,7 +1324,7 @@ async function computeEvening(nowMin, sched, etaCache) {
             grpIndex: -1,
             cardTitle: `🚶 台大舟山路 ➔ 捷運公館站`,
             routeLabel: '步行',
-            desc: `從處本部走舟山路 ${WALK.boatShanWalk} 分到公館站 → 捷運北向 → 中正紀念堂 → 農業部`,
+            desc: `處本部步行 ${WALK.destFromChangxing} 分到長興街口 → 走舟山路 ${WALK.boatShanWalk} 分到公館站 → 捷運北向 → 中正紀念堂 → 農業部`,
             total: arrive - depMin, arrive, est: !train, missed: false,
             steps: [
                 { name: '① 步行（舟山路）', info: `${minToTimeStr(walkT)} 到公館站3號出口`, clock: `${minToTimeStr(walkT + WALK.gongguanExit * calib)} 進站` },
