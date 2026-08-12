@@ -529,13 +529,13 @@ const MORNING_BUS = [
         stationId: 'G07', stationName: '公館站', exit: '1號出口',
         boardStop: '捷運公館站',
         routes: [
-            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '基隆路幹線', boardStop: '公館', boardWalk: 2, ride: 4, dest: '基隆長興街口', destWalk: 5 },  // 公館圓環站（步行2分）
-            { name: '254',   boardStop: '公館', boardWalk: 2, ride: 4, dest: '基隆長興街口', destWalk: 5 },        // 公館圓環站（步行2分）
+            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '基隆路幹線', boardStop: '公館', boardWalk: 2, ride: 4, dest: '基隆長興街口', destWalk: 7 },  // 公館圓環站（步行2分）
+            { name: '254',   boardStop: '公館', boardWalk: 2, ride: 4, dest: '基隆長興街口', destWalk: 7 },        // 公館圓環站（步行2分）
             { name: '綠11', ride: 6, dest: '自來水事業處', destWalk: 1 }, // 直達門口！
         ],
     },
@@ -543,18 +543,18 @@ const MORNING_BUS = [
         stationId: 'G08', stationName: '台電大樓站', exit: '2號出口',
         boardStop: '捷運台電大樓站',
         routes: [
-            { name: '1',   ride: 7, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕12', ride: 7, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕22', ride: 7, dest: '基隆長興街口', destWalk: 5 },
+            { name: '1',   ride: 7, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕12', ride: 7, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕22', ride: 7, dest: '基隆長興街口', destWalk: 7 },
         ],
     },
     {
         stationId: 'G09', stationName: '古亭站', exit: '5號出口',
         boardStop: '捷運古亭站(和平)',
         routes: [
-            { name: '907', ride: 12, dest: '基隆長興街口', destWalk: 5 },
-            { name: '295副', ride: 12, dest: '基隆長興街口', destWalk: 5 },   // 副線班次少
-            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 5 }, // 通勤時段班次
+            { name: '907', ride: 12, dest: '基隆長興街口', destWalk: 7 },
+            { name: '295副', ride: 12, dest: '基隆長興街口', destWalk: 7 },   // 副線班次少
+            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 }, // 通勤時段班次
         ],
     },
 ];
@@ -565,17 +565,17 @@ const MORNING_DIRECT = [
         boardStop: '植物園',
         walkFromExit: 8,       // Google Maps 步行實測 2026-08-12
         routes: [
-            { name: '1',   ride: 14, dest: '基隆長興街口', destWalk: 5 },
-            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 5 },
-            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 5 }, // 通勤時段班次
+            { name: '1',   ride: 14, dest: '基隆長興街口', destWalk: 7 },
+            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 7 },
+            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 }, // 通勤時段班次
         ],
     },
     {
         boardStop: '和平中華路口',
         walkFromExit: 10,      // Google Maps 步行實測 2026-08-12（⚠️比植物園遠，疑點位偏差，待實地確認）
         routes: [
-            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 5 },
-            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 5 },
+            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 7 },
+            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 },
         ],
     },
 ];
@@ -591,21 +591,21 @@ const MORNING_GUILIN = {
     guilin673Stop: '桂林路',
     walkToGuilinStop: 8,       // 桂林路 → 桂林路站牌（673 上車點）
     direct: [                  // 龍山寺站直達（車程推估：植物園→長興街口 13~14 分 + 早 3 站 ≈ 4 分）
-        { name: '907', ride: 17, dest: '基隆長興街口', destWalk: 5 },
-        { name: '1',   ride: 18, dest: '基隆長興街口', destWalk: 5 },
-        { name: '907通勤', ride: 24, dest: '基隆長興街口', destWalk: 5 },  // 通勤時段班次，路線較繞
+        { name: '907', ride: 17, dest: '基隆長興街口', destWalk: 7 },
+        { name: '1',   ride: 18, dest: '基隆長興街口', destWalk: 7 },
+        { name: '907通勤', ride: 24, dest: '基隆長興街口', destWalk: 7 },  // 通勤時段班次，路線較繞
     ],
-    guilin673: { name: '673', ride: 28, dest: '基隆長興街口', destWalk: 5 },  // 桂林路站直達（繞和平西路/辛亥路，久）
+    guilin673: { name: '673', ride: 28, dest: '基隆長興街口', destWalk: 7 },  // 桂林路站直達（繞和平西路/辛亥路，久）
     mrt: {                       // 龍山寺 → 西門(BL) → 轉 松山新店線 → 公館
         blRide: 2,               // 龍山寺→西門 車程
         gRide: 10,               // 西門→公館 車程（5 站）
         exitToBus: 1,            // 公館出站→公車站牌（與 EXIT_TO_BUS.G07 同）
         bus: [
-            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 5 },
-            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 5 },
+            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 7 },
+            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 7 },
         ],
     },
 };
@@ -622,7 +622,7 @@ const EVENING_STATIONS = [
 const EVENING_BUS = [
     {
         stationId: 'G07', stationName: '公館站',
-        boardStop: '基隆長興街口', walkFromDept: 5,
+        boardStop: '基隆長興街口', walkFromDept: 7,
         routes: [
             { name: '1',   ride: 5, destStop: '捷運公館站' },
             { name: '907', ride: 5, destStop: '捷運公館站' },
@@ -640,7 +640,7 @@ const EVENING_BUS = [
     },
     {
         stationId: 'G08', stationName: '台電大樓站',
-        boardStop: '基隆長興街口', walkFromDept: 5,
+        boardStop: '基隆長興街口', walkFromDept: 7,
         routes: [
             { name: '1',   ride: 9, destStop: '捷運台電大樓站' },
             // 棕12 已刪除：其返程只停「台電大樓」站（羅斯福路），不停「捷運台電大樓站」（2026-08-12 站序驗證）
@@ -648,7 +648,7 @@ const EVENING_BUS = [
     },
     {
         stationId: 'G09', stationName: '古亭站',
-        boardStop: '基隆長興街口', walkFromDept: 5,
+        boardStop: '基隆長興街口', walkFromDept: 7,
         routes: [
             { name: '1', ride: 11, destStop: '捷運古亭站(杭州)' },
         ],
