@@ -377,6 +377,10 @@
         .bus-row .br-eta { font-weight: 800; font-size: 0.92rem; color: var(--orange); white-space: nowrap; }
         .bus-row .br-eta.no { color: #999; font-weight: 600; }
         .bus-row .br-eta.ok { color: var(--green); }
+        .bus-more { margin-top: 4px; }
+        .bus-more summary { cursor: pointer; font-size: 0.78rem; color: #777; padding: 2px 0; user-select: none; }
+        .bus-more summary:hover { color: #333; }
+        .bus-more .bus-row { background: #fafafa; outline: none; }
 
         .time-display-grid {
             display: grid;
@@ -1450,11 +1454,9 @@ function renderUI(results, depStr, etaCache) {
             : (guilinGroup ? guilinGroup.boardStop
             : (guilinMrtGroup ? guilinMrtGroup.boardStop : '')));
         if (allRoutes.length) {
-            busRowsHtml = '<div class="bus-rows">';
-            allRoutes.forEach(rt => {
-                const isBest = rt.name === r.routeLabel;
+            // 2026-08-13 版面減法：最佳路線直接顯示，同站其他路線收進 <details> 展開
+            const buildRow = (rt, isBest) => {
                 const rowClass = isBest ? 'bus-row best-row' : 'bus-row';
-                // 每條路線目前的即時 ETA（同站同方向）
                 let rowEta = '—';
                 let rowDetail = '';
                 if (busGroup) {
@@ -1470,12 +1472,21 @@ function renderUI(results, depStr, etaCache) {
                     const b = cands[0] || null;
                     rowEta = b && typeof b.etaSec === 'number' && b.etaSec >= 0 ? fmtEta(b.etaSec) : '推估';
                 }
-                busRowsHtml += `<div class="${rowClass}">
+                return `<div class="${rowClass}">
                     <span class="br-name">${rt.name}</span>
                     <span class="br-info">${rowDetail}</span>
                     <span class="br-eta ${isBest ? 'ok' : ''}">${isBest ? '✓ 此組合 ' : ''}${rowEta}</span>
                 </div>`;
-            });
+            };
+            busRowsHtml = '<div class="bus-rows">';
+            const bestRt = allRoutes.find(rt => rt.name === r.routeLabel);
+            const otherRts = allRoutes.filter(rt => rt.name !== r.routeLabel);
+            if (bestRt) busRowsHtml += buildRow(bestRt, true);
+            if (otherRts.length) {
+                busRowsHtml += `<details class="bus-more"><summary>同站還有 ${otherRts.length} 條公車（${otherRts.map(o => o.name).join('、')}）▾</summary>`;
+                otherRts.forEach(rt => { busRowsHtml += buildRow(rt, false); });
+                busRowsHtml += '</details>';
+            }
             busRowsHtml += '</div>';
         }
 
@@ -1490,10 +1501,6 @@ function renderUI(results, depStr, etaCache) {
             ${busRowsHtml}
             <div class="time-display-grid">
                 <div>
-                    <div class="time-box-title">${startLocName}</div>
-                    <div class="time-box-num">${depStr}</div>
-                </div>
-                <div>
                     <div class="time-box-title">實時總耗時</div>
                     <div class="time-box-num primary">${Math.round(r.total)} 分 ${estTag}</div>
                 </div>
@@ -1502,7 +1509,6 @@ function renderUI(results, depStr, etaCache) {
                     <div class="time-box-num green">${minToTimeStr(r.arrive)}</div>
                 </div>
             </div>
-            <p style="font-size:0.85rem; color:#555; margin-bottom:6px;">${r.desc}</p>
         </div>`;
     });
 

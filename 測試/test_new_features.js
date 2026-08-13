@@ -94,5 +94,10 @@ check('togglePin 新增釘選', pinsAfter.includes('🚇 古亭站5號出口 ➔
 // 7) UI 有勾選框
 check('HTML 有 showDirectToggle 勾選框', html.includes('id="showDirectToggle"'));
 
+// 8) 版面減法（2026-08-13）：同站路線收合、時間格 2 盒、無卡底描述
+check('同站其他路線收進「同站還有 N 條」', shown.includes('同站還有') && shown.includes('<details'));
+check('時間格已移除「地表到達」盒', !shown.includes('地表到達'));
+check('卡底描述段落已移除', !shown.includes('font-size:0.85rem; color:#555'));
+
 console.log(`\n結果: ${pass} 過 / ${fail} 掛`);
 process.exit(fail ? 1 : 0);
