@@ -45,7 +45,7 @@ function check(name, cond) {
 // 1) 295 已加入古亭站群組（MORNING_BUS[2] = 古亭）
 const gu = MORNING_BUS.find(g => g.stationId === 'G09');
 check('古亭站群組有 295', gu && gu.routes.some(r => r.name === '295' && r.dest === '自來水處(辛亥)'));
-check('295 有 destWalk 20', gu.routes.find(r => r.name === '295').destWalk === 20);
+check('295 有 destWalk 8', gu.routes.find(r => r.name === '295').destWalk === 8);
 
 // 2) ROUTE_STOPS 有 295 站序
 check('ROUTE_STOPS[295][1] 古亭#6→辛亥#16', ROUTE_STOPS['295'] && ROUTE_STOPS['295'][1]['捷運古亭站(和平)'] === 6 && ROUTE_STOPS['295'][1]['自來水處(辛亥)'] === 16);
