@@ -469,13 +469,6 @@
             <option value="1.2">輕鬆悠閒 (約 6.0 分鐘)</option>
         </select>
     </div>
-    <div class="form-row">
-        <span class="form-label">顯示小南門直達站牌：</span>
-        <label style="font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer;">
-            <input type="checkbox" id="showDirectToggle" onchange="onShowDirectToggle()">
-            植物園／和平中華路口（預設隱藏；桂林路起點不受此開關影響）
-        </label>
-    </div>
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -517,18 +510,11 @@ const IDX_BL = {}; BLUE_ORDER.forEach((s, i) => IDX_BL[s] = i);
 const WALK = {
     surfaceToPlatform: 3,      // 小南門地表 → B2 月台（站內，無法以地圖測量）
     exitToBus: 3,              // 預設：捷運出站 → 公車站牌（各站另有實測值）
-    gongguanExit: 2,           // 公館站出站（步行方案）
     destFromChangxing: 7,      // 基隆長興街口 → 自來水處大門（Google Maps 步行實測 2026-08-12）
     destFromWaterDept: 1,      // 自來水事業處站牌 → 大門（路線引擎實測 29m）
-    toBotanicalGarden: 8,      // 小南門4號出口 → 植物園站牌（Google Maps 步行實測 2026-08-12）
-    toHepingZhonghua: 11,      // 4號出口 → 和平中華路口站牌（Google Maps 步行實測 2026-08-13：最短途經廣州街8巷 800m）
-    guilinToLonshan: 7,        // 桂林路(環河快下車處) → 捷運龍山寺站（Google Maps 步行實測 2026-08-12）
-    guilinToGuilinStop: 8,     // 桂林路 → 桂林路站牌（673 上車點，估 550m）
     mrtDwell: 0.5,             // 列車停站上下客
     toAgriculture: 8,          // 中正紀念堂站 → 農業部（Google Maps 步行實測 2026-08-12）
-    walkOnly: 50,              // 全程步行 小南門 → 長興街131（路線引擎實測 4.08km / ~52 分）
     transferXimen: 3,          // 西門站 BL↔G 月台轉乘步行
-    boatShanWalk: 15,          // 公館站 → 台大舟山路 → 大門（Google Maps 步行實測 2026-08-13：最短穿台大舟山路 1.1km=15分；繞基隆路 18分）
 };
 
 // 各捷運站：出站到公車站牌的實測步行（分鐘）
@@ -578,52 +564,7 @@ const MORNING_BUS = [
     },
 ];
 
-// 免捷運：小南門附近站牌直達公車（4號出口步行）
-const MORNING_DIRECT = [
-    {
-        boardStop: '植物園',
-        walkFromExit: 8,       // Google Maps 步行實測 2026-08-12
-        routes: [
-            { name: '1',   ride: 14, dest: '基隆長興街口', destWalk: 7 },
-            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 7 },
-            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 }, // 通勤時段班次
-        ],
-    },
-    {
-        boardStop: '和平中華路口',
-        walkFromExit: 10,      // Google Maps 步行實測 2026-08-12（⚠️比植物園遠，疑點位偏差，待實地確認）
-        routes: [
-            { name: '907', ride: 13, dest: '基隆長興街口', destWalk: 7 },
-            { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 },
-        ],
-    },
-];
 
-// 捷運公館站 → 步行（台大舟山路）＋ 全程步行
-const MORNING_WALK_MRT = { stationId: 'G07', ride: 6.5 };
-
-/* ---------- 桂林路起點（環河快下桂林路，2026-08-12 新增） ---------- */
-// 2026-08-13 依使用者指示：龍山寺站直達公車（907/1/907通勤）已刪除（通勤路線不經過龍山寺）；
-// 保留 桂林路站 673 直達 ＋ 捷運（龍山寺站→西門→公館）＋ 步行
-const MORNING_GUILIN = {
-    guilin673Stop: '桂林路',
-    walkToGuilinStop: 8,       // 桂林路 → 桂林路站牌（673 上車點）
-    guilin673: { name: '673', ride: 28, dest: '基隆長興街口', destWalk: 7 },  // 桂林路站直達（繞和平西路/辛亥路，久）
-    mrt: {                       // 龍山寺 → 西門(BL) → 轉 松山新店線 → 公館
-        blRide: 2,               // 龍山寺→西門 車程
-        gRide: 10,               // 西門→公館 車程（5 站）
-        exitToBus: 1,            // 公館出站→公車站牌（與 EXIT_TO_BUS.G07 同）
-        bus: [
-            { name: '1',   ride: 5, dest: '基隆長興街口', destWalk: 7 },
-            { name: '907', ride: 5, dest: '基隆長興街口', destWalk: 7 },
-            { name: '棕12', ride: 5, dest: '基隆長興街口', destWalk: 7 },
-            { name: '棕22', ride: 5, dest: '基隆長興街口', destWalk: 7 },
-            { name: '673', ride: 5, dest: '基隆長興街口', destWalk: 7 },
-        ],
-    },
-};
-
-/* ---------- 下班回程（自來水處 → 農業部） ---------- */
 const EVENING_STATIONS = [
     { id: 'G07', name: '公館站',   ride: 4.5 },  // → 中正紀念堂
     { id: 'G08', name: '台電大樓站', ride: 3 },
@@ -668,10 +609,7 @@ const EVENING_BUS = [
     },
 ];
 
-// 回程：公館站 → 步行（舟山路）
-const EVENING_WALK_MRT = { stationId: 'G07', ride: 4.5 };
 
-// 公車車程「推估模式」備用等候（無即時資料時）
 const FALLBACK_BUS_WAIT = { '1': 8, '907': 10, '棕12': 12, '棕22': 15, '673': 15, '綠11': 15, '基隆路幹線': 8, '254': 10, '295副': 15, '295': 15, '907通勤': 15 };
 const FALLBACK_MRT_WAIT = 3;   // 尖峰平均候車（推估）
 
@@ -945,7 +883,7 @@ function getMrtSchedule() {
     const url = `${API_BASE}/Rail/Metro/StationTimeTable/TRTC?$format=JSON`;
     return doFetch(url).then(arr => {
         const sched = {};
-        const NEED = ['G11', 'G10', 'G09', 'G08', 'G07', 'G12', 'BL10', 'BL11'];  // G11-07 小南門~公館、G12 西門、BL10 龍山寺、BL11 西門
+        const NEED = ['G11', 'G10', 'G09', 'G08', 'G07'];  // G11-07 小南門~公館、G10 中正紀念堂（回程）
         (Array.isArray(arr) ? arr : []).forEach(rec => {
             const lineId = rec.LineID || '';
             if (lineId !== 'G' && lineId !== 'BL') return;    // LineID 是 'G'/'BL'（不是 'GL'！）
@@ -1069,176 +1007,6 @@ async function computeMorning(nowMin, sched, etaCache) {
             });
         }
     }
-
-    // B) 免捷運直達公車（植物園 / 和平中華路口）
-    for (let di = 0; di < MORNING_DIRECT.length; di++) {
-        const dg = MORNING_DIRECT[di];
-        const walkT = depMin + dg.walkFromExit * calib;
-        for (const route of dg.routes) {
-            const etaArr = etaCache[route.name] || [];
-            const cands = findBusCandidates(etaArr, route.name, dg.boardStop, route.dest);
-            const b = cands[0] || null;
-            let wait, missed = false, est = false;
-            const stopReachRel = walkT - nowMin;      // 從「現在」起算（與公車 ETA 同一基準）
-            let picked = null;
-            for (const c of cands) {
-                if (c.etaSec === null) break;
-                if (c.etaSec / 60 >= stopReachRel) { picked = c; break; }
-            }
-            if (picked) {
-                wait = picked.etaSec / 60 - stopReachRel;
-            } else if (cands.length && cands[0].etaSec !== null) {
-                missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true;
-            } else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            const arrive = walkT + wait + route.ride + route.destWalk * calib;
-            results.push({
-                type: 'direct',
-                grpIndex: di,
-                cardTitle: `🚌 ${route.name} 直達（${dg.boardStop}站牌，免換捷運）`,
-                routeLabel: route.name,
-                desc: `小南門4號出口 ➔ 步行 ${Math.round(dg.walkFromExit * calib)} 分到【${dg.boardStop}】→ ${route.name} 搭 ${route.ride} 分直達【${route.dest}】→ 步行 ${route.destWalk} 分`,
-                total: arrive - depMin, arrive, est, missed,
-                steps: [
-                    { name: '① 步行到站牌', info: `${minToTimeStr(walkT)} 抵達【${dg.boardStop}】`, clock: `${minToTimeStr(walkT + wait)} 搭上${est ? '（推估）' : ''}` },
-                    { name: `② 公車 ${route.name} 直達`, info: `車程 ${route.ride} 分｜下車【${route.dest}】`, clock: `${minToTimeStr(arrive - route.destWalk * calib)} 下車` },
-                ],
-                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
-            });
-        }
-    }
-
-    // C) 捷運公館站 → 步行舟山路
-    {
-        const st = MORNING_WALK_MRT;
-        const train = nextTrains['G07'];
-        const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-        const boardTime = depMin + WALK.surfaceToPlatform * calib + mrtWait;
-        const arrive = boardTime + st.ride + WALK.gongguanExit * calib + WALK.boatShanWalk * calib + WALK.destFromChangxing * calib;
-        results.push({
-            type: 'mrt-walk',
-            grpIndex: -1,
-            cardTitle: `🚶 公館站3號出口 ➔ 台大舟山路步行`,
-            routeLabel: '步行',
-            desc: `穿越台大校園（舟山路）約 ${WALK.boatShanWalk} 分到基隆長興街口 ＋ 步行 ${WALK.destFromChangxing} 分到大門，零塞車、時間最穩定`,
-            total: arrive - depMin, arrive, est: !train, missed: false,
-            steps: [
-                { name: '① 捷運 小南門站 (G11)', info: `南下 ${Math.round(mrtWait)} 分後發車${train ? '（往' + train.destName + '）' : '（推估）'}｜車程 ${st.ride} 分`, clock: `${minToTimeStr(boardTime)} 進站` },
-                { name: '② 步行（台大舟山路＋長興街）', info: `${minToTimeStr(arrive - WALK.boatShanWalk * calib - WALK.destFromChangxing * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分到長興街口 ➔ 再步行 ${WALK.destFromChangxing} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
-            ],
-            bestBusRow: null,
-        });
-    }
-
-    // E) 桂林路起點（環河快下桂林路，2026-08-12 新增）
-    {
-        const guilin = MORNING_GUILIN;
-        const walkLonshanT = depMin + WALK.guilinToLonshan * calib;   // 走到捷運龍山寺站（捷運轉乘用）
-        // E1) 龍山寺站直達公車（907/1/907通勤）已於 2026-08-13 刪除：通勤路線不經過龍山寺（使用者指示）
-        // E2) 桂林路站 → 673 直達（路線繞，車程長）
-        {
-            const route = guilin.guilin673;
-            const walkGuilin = depMin + WALK.guilinToGuilinStop * calib;
-            const etaArr = etaCache[route.name] || [];
-            const cands = findBusCandidates(etaArr, route.name, guilin.guilin673Stop, route.dest);
-            const b = cands[0] || null;
-            let wait, missed = false, est = false;
-            const stopReachRel = walkGuilin - nowMin;
-            let picked = null;
-            for (const c of cands) {
-                if (c.etaSec === null) break;
-                if (c.etaSec / 60 >= stopReachRel) { picked = c; break; }
-            }
-            if (picked) wait = picked.etaSec / 60 - stopReachRel;
-            else if (cands.length && cands[0].etaSec !== null) { missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            const arrive = walkGuilin + wait + route.ride + route.destWalk * calib;
-            results.push({
-                type: 'guilin-direct', grpIndex: 1, routeLabel: route.name,
-                cardTitle: `🚗 桂林路 ➔ 🚌 673 直達（桂林路站）`,
-                desc: `桂林路站牌搭 673（走和平西路→辛亥路，路線繞）➔ 【${route.dest}】→ 步行 ${route.destWalk} 分（直達免換乘，但車程長）`,
-                total: arrive - depMin, arrive, est, missed,
-                steps: [
-                    { name: '① 步行到桂林路站牌', info: `步行 ${Math.round(WALK.guilinToGuilinStop * calib)} 分`, clock: `${minToTimeStr(walkGuilin)} 抵達` },
-                    { name: '② 公車 673 直達', info: `車程 ${route.ride} 分（繞行）｜下車【${route.dest}】`, clock: `${minToTimeStr(walkGuilin + wait)} 搭上${est ? '（推估）' : ''}` },
-                ],
-                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
-            });
-        }
-        // F) 桂林路 → 龍山寺(BL) → 西門 → 松山新店線 → 公館
-        const blTrain = findNextTrain(sched, 'BL', 'BL10', 'BL11', 0, +1);
-        const gTrain = findNextTrain(sched, 'G', 'G12', 'G07', 1, +1);
-        const blWait = blTrain ? blTrain.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-        const gWait = gTrain ? gTrain.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-        const mrtEst = !blTrain || !gTrain;
-        const blBoard = walkLonshanT + WALK.surfaceToPlatform * calib + blWait;   // 龍山寺進站發車
-        const ximenArrive = blBoard + guilin.mrt.blRide;                           // 到西門
-        const gBoard = ximenArrive + WALK.transferXimen * calib + gWait;           // 轉乘後發車
-        const gongguanArrive = gBoard + guilin.mrt.gRide;                          // 到公館
-        // F1) 公館 → 舟山路步行
-        {
-            const arrive = gongguanArrive + WALK.gongguanExit * calib + WALK.boatShanWalk * calib + WALK.destFromChangxing * calib;
-            results.push({
-                type: 'guilin-mrt', grpIndex: 0, routeLabel: '步行',
-                cardTitle: `🚗 桂林路 ➔ 🚇 板南線→松山新店線 ➔ 🚶 舟山路`,
-                desc: `龍山寺(BL10) 1 站到西門 → 轉松山新店線 5 站到公館 → 穿越台大校園（頻繁換乘，走路多）`,
-                total: arrive - depMin, arrive, est: mrtEst, missed: false,
-                steps: [
-                    { name: '① 步行到龍山寺站', info: `${Math.round(WALK.guilinToLonshan * calib)} 分`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
-                    { name: '② 板南線 龍山寺→西門', info: `${blTrain ? '下一班 ' + Math.round(blWait) + ' 分後（往' + blTrain.destName + '）' : '推估候車'}｜車程 2 分`, clock: `${minToTimeStr(blBoard)} 發車` },
-                    { name: '③ 轉乘 松山新店線', info: `西門站轉乘步行 ${WALK.transferXimen} 分${gTrain ? '｜下一班 ' + Math.round(gWait) + ' 分後（往' + gTrain.destName + '）' : ''}｜車程 10 分`, clock: `${minToTimeStr(gBoard)} 發車` },
-                    { name: '④ 舟山路＋長興街步行', info: `${minToTimeStr(gongguanArrive + WALK.gongguanExit * calib)} 到公館站3號出口 ➔ 步行 ${WALK.boatShanWalk} 分到長興街口 ➔ 再步行 ${WALK.destFromChangxing} 分`, clock: `${minToTimeStr(arrive)} 抵達大門` },
-                ],
-                bestBusRow: null,
-            });
-        }
-        // F2) 公館 → 公車（1/907/棕12/棕22/673）
-        for (const route of guilin.mrt.bus) {
-            const etaArr = etaCache[route.name] || [];
-            const cands = findBusCandidates(etaArr, route.name, '捷運公館站', route.dest);
-            const b = cands[0] || null;
-            let wait, missed = false, est = mrtEst;
-            const busStopReach = gongguanArrive + (EXIT_TO_BUS.G07 ?? WALK.exitToBus) * calib;
-            const stopReachRel = busStopReach - nowMin;
-            let picked = null;
-            for (const c of cands) {
-                if (c.etaSec === null) break;
-                if (c.etaSec / 60 >= stopReachRel) { picked = c; break; }
-            }
-            if (picked) wait = picked.etaSec / 60 - stopReachRel;
-            else if (cands.length && cands[0].etaSec !== null) { missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            const arrive = busStopReach + wait + route.ride + route.destWalk * calib;
-            results.push({
-                type: 'guilin-mrt', grpIndex: 1, routeLabel: route.name,
-                cardTitle: `🚗 桂林路 ➔ 🚇 板南線→松山新店線 ➔ 🚌 ${route.name}`,
-                desc: `龍山寺→西門→公館（換乘 2 次）→ ${route.name} 搭 ${route.ride} 分到【${route.dest}】→ 步行 ${route.destWalk} 分（頻繁換乘）`,
-                total: arrive - depMin, arrive, est, missed,
-                steps: [
-                    { name: '① 步行到龍山寺站', info: `${Math.round(WALK.guilinToLonshan * calib)} 分`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
-                    { name: '② 板南線 龍山寺→西門', info: `${blTrain ? '下一班 ' + Math.round(blWait) + ' 分後' : '推估候車'}｜車程 2 分`, clock: `${minToTimeStr(blBoard)} 發車` },
-                    { name: '③ 松山新店線 西門→公館', info: `轉乘 ${WALK.transferXimen} 分｜車程 10 分`, clock: `${minToTimeStr(gBoard)} 發車` },
-                    { name: `④ 公車 ${route.name}`, info: `於【捷運公館站】上車｜車程 ${route.ride} 分`, clock: `${minToTimeStr(busStopReach + wait)} 搭上${est ? '（推估）' : ''}` },
-                ],
-                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
-            });
-        }
-    }
-
-    // D) 全程步行（基準線）
-    {
-        const arrive = depMin + WALK.walkOnly * calib;
-        results.push({
-            type: 'walk',
-            grpIndex: -1,
-            cardTitle: `🚶‍♀️ 全程步行（約 ${Math.round(WALK.walkOnly * calib)} 分）`,
-            routeLabel: '步行',
-            desc: '中華路 → 和平西路 → 泉州街 → 辛亥路 → 基隆路 → 長興街，約 4.1 公里。僅供基準參考。',
-            total: arrive - depMin, arrive, est: false, missed: false,
-            steps: [],
-            bestBusRow: null,
-        });
-    }
-
     return results;
 }
 
@@ -1300,30 +1068,6 @@ async function computeEvening(nowMin, sched, etaCache) {
             });
         }
     }
-
-    // 回程步行方案：公館站步行（舟山路）
-    {
-        const st = EVENING_WALK_MRT;
-        const train = nextTrains['G07'];
-        const mrtWait = train ? train.etaMin + WALK.mrtDwell : FALLBACK_MRT_WAIT;
-        const walkT = depMin + (WALK.destFromChangxing + WALK.boatShanWalk) * calib;
-        const boardTime = walkT + WALK.gongguanExit * calib + mrtWait;
-        const arrive = boardTime + st.ride + WALK.toAgriculture * calib;
-        results.push({
-            type: 'walk-mrt',
-            grpIndex: -1,
-            cardTitle: `🚶 台大舟山路 ➔ 捷運公館站`,
-            routeLabel: '步行',
-            desc: `處本部步行 ${WALK.destFromChangxing} 分到長興街口 → 走舟山路 ${WALK.boatShanWalk} 分到公館站 → 捷運北向 → 中正紀念堂 → 農業部`,
-            total: arrive - depMin, arrive, est: !train, missed: false,
-            steps: [
-                { name: '① 步行（舟山路）', info: `${minToTimeStr(walkT)} 到公館站3號出口`, clock: `${minToTimeStr(walkT + WALK.gongguanExit * calib)} 進站` },
-                { name: '② 捷運 公館站 北向', info: `車程 ${st.ride} 分｜往中正紀念堂`, clock: `${minToTimeStr(boardTime)} 發車` },
-            ],
-            bestBusRow: null,
-        });
-    }
-
     return results;
 }
 
@@ -1335,14 +1079,14 @@ function switchCommuteTab(mode) {
 
     if (mode === 'morning') {
         document.getElementById('headerTitle').innerText = '捷運小南門站 ➔ 台北自來水事業處';
-        document.getElementById('headerSub').innerText = '☀️ 上班去程 ｜ 起點：小南門4號出口 或 桂林路(環河快)｜實時排序前 10 名';
+        document.getElementById('headerSub').innerText = '☀️ 上班去程 ｜ 起點：小南門4號出口｜實時排序前 10 名';
         document.getElementById('depLabelText').innerText = '小南門4號出口地表到達時間：';
-        document.getElementById('footerNoteText').innerText = '步行時間來源：Google Maps 步行實測（2026-08-12）｜地表至月台 3 分｜長興街口→大門 7 分｜植物園站牌 8 分、和平中華路口 10 分⚠️｜公館出站→公車站牌 1 分、台電大樓 2.5 分、古亭 1.5 分｜舟山路 15 分⚠️需實地確認｜桂林路→龍山寺站 7 分';
+        document.getElementById('footerNoteText').innerText = '步行時間來源：Google Maps 步行實測｜地表至月台 3 分｜長興街口→大門 7 分｜捷運出站→公車站牌 1~2.5 分（轉乘）';
     } else {
         document.getElementById('headerTitle').innerText = '台北自來水事業處 ➔ 農業部大門口';
         document.getElementById('headerSub').innerText = '🌙 下班回程 ｜ 實時對算自來水處大門出發至農業部';
         document.getElementById('depLabelText').innerText = '自來水事業處大門口出發時間：';
-        document.getElementById('footerNoteText').innerText = '步行時間來源：Google Maps 步行實測（2026-08-12）｜處本部→長興街口 7 分｜中正紀念堂站→農業部 8 分｜舟山路 15 分⚠️需實地確認';
+        document.getElementById('footerNoteText').innerText = '步行時間來源：Google Maps 步行實測｜處本部→長興街口 7 分｜中正紀念堂站→農業部 8 分';
     }
     fetchLiveTransitData();
 }
@@ -1371,10 +1115,6 @@ function renderUI(results, depStr, etaCache) {
     }
 
     results.sort((a, b) => a.total - b.total);
-    // 小南門直達站牌開關：預設隱藏 植物園/和平中華路口（桂林路起點不受影響，2026-08-13 依使用者指示）
-    if (currentMode === 'morning' && !getShowDirect()) {
-        results = results.filter(r => r.type !== 'direct');
-    }
     const best = results[0];
     const SHOW_TOP = 10;   // 依使用者需求：只列出最短的前 10 個組合
     // 置頂固定：被釘選的卡片永遠排最前面（不隨時間排名移動）
@@ -1397,15 +1137,6 @@ function renderUI(results, depStr, etaCache) {
         <div class="ob-main">${best.cardTitle} ${best.missed ? '（⚠️ 需等下一班）' : ''}</div>
         <div class="ob-sub">${Math.round(best.total)} 分鐘 ｜ ${minToTimeStr(best.arrive)} 抵達${best.est ? ' ｜ ⚠️ 部分時段為推估值' : ' ｜ 全即時'}</div>
     </div>`;
-
-    // 桂林路起點資訊列（環河快下桂林路的通勤者參考；未進前 10 也列出）
-    const guilinIdx = results.findIndex(r => r.type === 'guilin-direct' || r.type === 'guilin-mrt');
-    if (guilinIdx >= 0) {
-        const gr = results[guilinIdx];
-        html += `<div class="setting-card" style="font-size:0.85rem;background:#f0f7ff;border:1px solid #b3d1ff;">
-            🚗 <b>桂林路起點</b>最快：${gr.cardTitle} ｜ <b>${Math.round(gr.total)} 分</b>（全場第 ${guilinIdx + 1} 名${guilinIdx >= SHOW_TOP ? '，未進前 10，僅供參考' : ''}）
-        </div>`;
-    }
 
     topResults.forEach((r, idx) => {
         const rank = idx + 1;
@@ -1434,25 +1165,8 @@ function renderUI(results, depStr, etaCache) {
         const busGroup = (r.type === 'mrt-bus' || r.type === 'bus-mrt') && r.grpIndex >= 0
             ? (currentMode === 'morning' ? MORNING_BUS[r.grpIndex] : EVENING_BUS[r.grpIndex])
             : null;
-        const directGroup = currentMode === 'morning' && r.type === 'direct'
-            ? (MORNING_DIRECT[r.grpIndex] || null)
-            : null;
-        const guilinGroup = currentMode === 'morning' && r.type === 'guilin-direct'
-            ? (r.grpIndex === 0
-                ? { boardStop: '', routes: [] }   // grpIndex 0（龍山寺站直達）已於 2026-08-13 刪除
-                : { boardStop: MORNING_GUILIN.guilin673Stop, routes: [MORNING_GUILIN.guilin673] })
-            : null;
-        const guilinMrtGroup = currentMode === 'morning' && r.type === 'guilin-mrt' && r.grpIndex === 1
-            ? { boardStop: '捷運公館站', routes: MORNING_GUILIN.mrt.bus }
-            : null;
-        const allRoutes = busGroup ? busGroup.routes
-            : (directGroup ? directGroup.routes
-            : (guilinGroup ? guilinGroup.routes
-            : (guilinMrtGroup ? guilinMrtGroup.routes : [])));
-        const boardStopName = busGroup ? busGroup.boardStop
-            : (directGroup ? directGroup.boardStop
-            : (guilinGroup ? guilinGroup.boardStop
-            : (guilinMrtGroup ? guilinMrtGroup.boardStop : '')));
+        const allRoutes = busGroup ? busGroup.routes : [];
+        const boardStopName = busGroup ? busGroup.boardStop : '';
         if (allRoutes.length) {
             // 2026-08-13 版面減法：最佳路線直接顯示，同站其他路線收進 <details> 展開
             const buildRow = (rt, isBest) => {
@@ -1464,11 +1178,6 @@ function renderUI(results, depStr, etaCache) {
                     rowDetail = `→ ${destName}${rt.destWalk ? '｜步行' + rt.destWalk + '分' : ''}`;
                     const boardNm = rt.boardStop || boardStopName;   // 圓環站路線覆寫站名
                     const cands = findBusCandidates(etaCache[rt.name] || [], rt.name, boardNm, rt.destStop || rt.dest || '捷運公館站');
-                    const b = cands[0] || null;
-                    rowEta = b && typeof b.etaSec === 'number' && b.etaSec >= 0 ? fmtEta(b.etaSec) : '推估';
-                } else if (directGroup) {
-                    rowDetail = `→ ${rt.dest}｜步行${rt.destWalk}分`;
-                    const cands = findBusCandidates(etaCache[rt.name] || [], rt.name, boardStopName, rt.dest);
                     const b = cands[0] || null;
                     rowEta = b && typeof b.etaSec === 'number' && b.etaSec >= 0 ? fmtEta(b.etaSec) : '推估';
                 }
@@ -1542,10 +1251,7 @@ async function fetchLiveTransitData() {
 
         // 2) 依目前分頁抓公車路線（一次批次呼叫，符合 5 次/分限制）
         const routeNames = currentMode === 'morning'
-            ? [...new Set(MORNING_BUS.flatMap(g => g.routes.map(r => r.name))
-                .concat(MORNING_DIRECT.flatMap(g => g.routes.map(r => r.name)))
-                .concat([MORNING_GUILIN.guilin673.name])
-                .concat(MORNING_GUILIN.mrt.bus.map(r => r.name)))]
+            ? [...new Set(MORNING_BUS.flatMap(g => g.routes.map(r => r.name)))]
             : [...new Set(EVENING_BUS.flatMap(g => g.routes.map(r => r.name)))];
         const etaCache = {};
         let authFail = false;
@@ -1614,18 +1320,7 @@ async function fetchLiveTransitData() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-/* ---------- 顯示開關與置頂固定（2026-08-13 新增） ---------- */
-function getShowDirect() {
-    return localStorage.getItem('commute_show_direct') === '1';
-}
-function onShowDirectToggle() {
-    localStorage.setItem('commute_show_direct', document.getElementById('showDirectToggle').checked ? '1' : '0');
-    fetchLiveTransitData();
-}
-function initShowDirectToggle() {
-    const el = document.getElementById('showDirectToggle');
-    if (el) el.checked = getShowDirect();
-}
+/* ---------- 置頂固定（2026-08-13 新增） ---------- */
 function getPins() {
     try { return new Set(JSON.parse(localStorage.getItem('commute_pins') || '[]')); } catch (e) { return new Set(); }
 }
@@ -1651,7 +1346,6 @@ document.getElementById('depTime').addEventListener('change', () => {
 document.getElementById('walkCalib').addEventListener('change', fetchLiveTransitData);
 
 initKeyCard();
-initShowDirectToggle();
 setCurrentTimeInInput();
 setInterval(fetchLiveTransitData, 60000);   // 每 60 秒自動刷新
 fetchLiveTransitData();

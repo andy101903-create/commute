@@ -1,4 +1,4 @@
-// 驗證 2026-08-13 新功能：295 路線、直達站牌開關、置頂固定
+// 驗證 2026-08-13 功能：295 路線、無步行方案（懶人版）、置頂固定
 const fs = require('fs');
 const path = require('path');
 
@@ -58,46 +58,52 @@ const fakeEta = [
 const cands = findBusCandidates(fakeEta, '295', '捷運古亭站(和平)', '自來水處(辛亥)');
 check('295 候選只取 dir1', cands.length === 1 && cands[0].etaSec === 300);
 
-// 4) 開關：預設隱藏 MORNING_DIRECT（植物園/和平中華路口）；桂林路不受影響
-check('getShowDirect 預設 false', getShowDirect() === false);
-check('MORNING_GUILIN 已刪除龍山寺直達（無 direct 欄位）', !('direct' in MORNING_GUILIN) && !('boardStop' in MORNING_GUILIN));
-check('MORNING_GUILIN 保留 673', !!MORNING_GUILIN.guilin673 && MORNING_GUILIN.guilin673.name === '673');
-const fakeResults = [
-    { type: 'mrt-bus', grpIndex: 2, cardTitle: '🚇 古亭站5號出口 ➔ 🚌 295 公車', routeLabel: '295', total: 30, arrive: 0 },
-    { type: 'direct', grpIndex: 0, cardTitle: '🚌 907 直達（植物園站牌，免換捷運）', routeLabel: '907', total: 25, arrive: 0 },
-    { type: 'guilin-direct', grpIndex: 1, cardTitle: '🚗 桂林路 ➔ 🚌 673 直達（桂林路站）', routeLabel: '673', total: 28, arrive: 0 },
-];
-currentMode = 'morning';
-// renderUI 用（需要有 routesApp 元素）
-renderUI(fakeResults, '08:00', {});
-const shown = el('routesApp').innerHTML;
-check('開關關閉時不顯示 植物園', !shown.includes('植物園'));
-check('開關關閉時仍顯示 桂林路(673)', shown.includes('桂林路 ➔ 🚌 673'));
-check('開關關閉時仍顯示 古亭 295', shown.includes('古亭站5號出口 ➔ 🚌 295'));
+// 4) 懶人版（2026-08-13）：所有步行方案已刪除
+check('MORNING_DIRECT 已刪除', typeof MORNING_DIRECT === 'undefined');
+check('MORNING_WALK_MRT 已刪除', typeof MORNING_WALK_MRT === 'undefined');
+check('MORNING_GUILIN 已刪除', typeof MORNING_GUILIN === 'undefined');
+check('EVENING_WALK_MRT 已刪除', typeof EVENING_WALK_MRT === 'undefined');
+check('WALK 無 boatShanWalk/walkOnly', typeof WALK.boatShanWalk === 'undefined' && typeof WALK.walkOnly === 'undefined');
+check('HTML 無 showDirectToggle 勾選框', !html.includes('showDirectToggle'));
+check('HTML 無桂林路方案字樣', !html.includes('桂林路起點') && !html.includes('MORNING_GUILIN'));
+check('保留長興街口→大門 7 分', WALK.destFromChangxing === 7);
 
-// 5) 置頂：釘選 植物園 卡片後（開關開啟）它在最前面
-store.set('commute_show_direct', '1');
-store.set('commute_pins', JSON.stringify(['🚌 907 直達（植物園站牌，免換捷運）']));
-renderUI(fakeResults, '08:00', {});
-const html2 = el('routesApp').innerHTML;
-const idxPlant = html2.indexOf('植物園站牌');
-const idxGu = html2.indexOf('古亭站5號出口');
-check('釘選的植物園卡片排在古亭前面', idxPlant >= 0 && idxGu >= 0 && idxPlant < idxGu);
-check('釘選卡片顯示 pinned 樣式', html2.includes('pin-btn pinned'));
+// 5) computeMorning 只產 mrt-bus（無 direct/walk/guilin）
+(async () => {
+    const fakeEta2 = [
+        { Direction: 1, StopName: { Zh_tw: '捷運古亭站(和平)' }, EstimateTime: 300, PlateNumb: 'ABC-123', StopStatus: 0 },
+    ];
+    const morning = await computeMorning(8 * 60 + 10, {}, { '295': fakeEta2 });
+    const types = new Set(morning.map(r => r.type));
+    check('去程只產 mrt-bus 方案', types.size === 1 && types.has('mrt-bus'));
 
-// 6) togglePin 切換（模擬點按鈕）
-const btn = { getAttribute: k => (k === 'data-pin' ? '🚇 古亭站5號出口 ➔ 🚌 295 公車' : null) };
-togglePin(btn);
-const pinsAfter = JSON.parse(store.get('commute_pins'));
-check('togglePin 新增釘選', pinsAfter.includes('🚇 古亭站5號出口 ➔ 🚌 295 公車'));
+    // 6) 置頂固定：釘選 295 卡後它在最前面
+    const fakeResults = [
+        { type: 'mrt-bus', grpIndex: 2, cardTitle: '🚇 古亭站5號出口 ➔ 🚌 295 公車', routeLabel: '295', total: 30, arrive: 0 },
+        { type: 'mrt-bus', grpIndex: 0, cardTitle: '🚇 公館站1號出口 ➔ 🚌 907 公車', routeLabel: '907', total: 25, arrive: 0 },
+    ];
+    store.set('commute_pins', JSON.stringify(['🚇 古亭站5號出口 ➔ 🚌 295 公車']));
+    currentMode = 'morning';
+    renderUI(fakeResults, '08:00', {});
+    const html2 = el('routesApp').innerHTML;
+    // 只看卡片區（排除 🏆 最快組合橫幅——橫幅永遠顯示真最快，與置頂無關）
+    const cardArea = html2.slice(html2.indexOf('route-card'));
+    const idx295 = cardArea.indexOf('古亭站5號出口');
+    const idx907 = cardArea.indexOf('公館站1號出口');
+    check('釘選的 295 卡排在 907 前', idx295 >= 0 && idx907 >= 0 && idx295 < idx907);
+    check('釘選卡片顯示 pinned 樣式', html2.includes('pin-btn pinned'));
 
-// 7) UI 有勾選框
-check('HTML 有 showDirectToggle 勾選框', html.includes('id="showDirectToggle"'));
+    // 7) togglePin 切換（模擬點按鈕）
+    const btn = { getAttribute: k => (k === 'data-pin' ? '🚇 古亭站5號出口 ➔ 🚌 295 公車' : null) };
+    togglePin(btn);
+    const pinsAfter = JSON.parse(store.get('commute_pins'));
+    check('togglePin 取消釘選', !pinsAfter.includes('🚇 古亭站5號出口 ➔ 🚌 295 公車'));
 
-// 8) 版面減法（2026-08-13）：同站路線收合、時間格 2 盒、無卡底描述
-check('同站其他路線收進「同站還有 N 條」', shown.includes('同站還有') && shown.includes('<details'));
-check('時間格已移除「地表到達」盒', !shown.includes('地表到達'));
-check('卡底描述段落已移除', !shown.includes('font-size:0.85rem; color:#555'));
+    // 8) 版面減法（2026-08-13）：同站路線收合、時間格 2 盒、無卡底描述
+    check('同站其他路線收進「同站還有 N 條」', html2.includes('同站還有') && html2.includes('<details'));
+    check('時間格已移除「地表到達」盒', !html2.includes('地表到達'));
+    check('卡底描述段落已移除', !html2.includes('font-size:0.85rem; color:#555'));
 
-console.log(`\n結果: ${pass} 過 / ${fail} 掛`);
-process.exit(fail ? 1 : 0);
+    console.log(`\n結果: ${pass} 過 / ${fail} 掛`);
+    process.exit(fail ? 1 : 0);
+})();
