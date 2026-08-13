@@ -305,6 +305,13 @@
 
         .rank-badge.best { background: var(--green); color: white; }
         .rank-badge.late { background: var(--red); color: white; }
+        .pin-btn {
+            border: 1px solid #ccc; background: #fff; border-radius: 6px;
+            cursor: pointer; font-size: 0.9rem; padding: 2px 6px; margin-left: 6px;
+            opacity: 0.6; line-height: 1.2;
+        }
+        .pin-btn:hover { opacity: 1; background: #fff8e1; }
+        .pin-btn.pinned { opacity: 1; background: #fff3cd; border-color: #f0c040; }
 
         .vehicle-board {
             background: #f0f4f9;
@@ -458,6 +465,13 @@
             <option value="1.2">輕鬆悠閒 (約 6.0 分鐘)</option>
         </select>
     </div>
+    <div class="form-row">
+        <span class="form-label">顯示小南門直達站牌：</span>
+        <label style="font-size:0.85rem; display:flex; align-items:center; gap:4px; cursor:pointer;">
+            <input type="checkbox" id="showDirectToggle" onchange="onShowDirectToggle()">
+            植物園／和平中華路口（預設隱藏；桂林路起點不受此開關影響）
+        </label>
+    </div>
 </div>
 
 <div class="status-bar" id="statusBar">
@@ -554,6 +568,7 @@ const MORNING_BUS = [
         routes: [
             { name: '907', ride: 12, dest: '基隆長興街口', destWalk: 7 },
             { name: '295副', ride: 12, dest: '基隆長興街口', destWalk: 7 },   // 副線班次少
+            { name: '295', ride: 12, dest: '自來水處(辛亥)', destWalk: 20 },  // dir1 古亭#6→辛亥#16；步行≈20分⚠️（OSRM 938m+7分，待 Google Maps 實測）
             { name: '907通勤', ride: 20, dest: '基隆長興街口', destWalk: 7 }, // 通勤時段班次
         ],
     },
@@ -584,16 +599,11 @@ const MORNING_DIRECT = [
 const MORNING_WALK_MRT = { stationId: 'G07', ride: 6.5 };
 
 /* ---------- 桂林路起點（環河快下桂林路，2026-08-12 新增） ---------- */
-// 龍山寺站(BL10)可搭 907/1 直達長興街口；板南線 1 站到西門轉松山新店線
+// 2026-08-13 依使用者指示：龍山寺站直達公車（907/1/907通勤）已刪除（通勤路線不經過龍山寺）；
+// 保留 桂林路站 673 直達 ＋ 捷運（龍山寺站→西門→公館）＋ 步行
 const MORNING_GUILIN = {
-    boardStop: '捷運龍山寺站',
     guilin673Stop: '桂林路',
     walkToGuilinStop: 8,       // 桂林路 → 桂林路站牌（673 上車點）
-    direct: [                  // 龍山寺站直達（車程推估：植物園→長興街口 13~14 分 + 早 3 站 ≈ 4 分）
-        { name: '907', ride: 17, dest: '基隆長興街口', destWalk: 7 },
-        { name: '1',   ride: 18, dest: '基隆長興街口', destWalk: 7 },
-        { name: '907通勤', ride: 24, dest: '基隆長興街口', destWalk: 7 },  // 通勤時段班次，路線較繞
-    ],
     guilin673: { name: '673', ride: 28, dest: '基隆長興街口', destWalk: 7 },  // 桂林路站直達（繞和平西路/辛亥路，久）
     mrt: {                       // 龍山寺 → 西門(BL) → 轉 松山新店線 → 公館
         blRide: 2,               // 龍山寺→西門 車程
@@ -658,7 +668,7 @@ const EVENING_BUS = [
 const EVENING_WALK_MRT = { stationId: 'G07', ride: 4.5 };
 
 // 公車車程「推估模式」備用等候（無即時資料時）
-const FALLBACK_BUS_WAIT = { '1': 8, '907': 10, '棕12': 12, '棕22': 15, '673': 15, '綠11': 15, '基隆路幹線': 8, '254': 10, '295副': 15, '907通勤': 15 };
+const FALLBACK_BUS_WAIT = { '1': 8, '907': 10, '棕12': 12, '棕22': 15, '673': 15, '綠11': 15, '基隆路幹線': 8, '254': 10, '295副': 15, '295': 15, '907通勤': 15 };
 const FALLBACK_MRT_WAIT = 3;   // 尖峰平均候車（推估）
 
 // 公車站序表（2026-08-12 以 TDX StopOfRoute 實測）——ETA 端點無 StopSequence 欄位，方向判斷靠此表
@@ -696,6 +706,9 @@ const ROUTE_STOPS = {
   },
   '295副': {
     1: { '捷運古亭站(和平)': 7, '基隆長興街口': 17 },
+  },
+  '295': {
+    1: { '捷運古亭站(和平)': 6, '自來水處(辛亥)': 16 },
   },
   '907通勤': {
     0: { '捷運龍山寺站': 6, '和平中華路口': 8, '植物園': 9, '捷運古亭站(和平)': 14, '基隆長興街口': 54 },
@@ -1115,35 +1128,8 @@ async function computeMorning(nowMin, sched, etaCache) {
     // E) 桂林路起點（環河快下桂林路，2026-08-12 新增）
     {
         const guilin = MORNING_GUILIN;
-        const walkLonshanT = depMin + WALK.guilinToLonshan * calib;   // 走到捷運龍山寺站
-        // E1) 龍山寺站 → 907/1 直達長興街口
-        for (const route of guilin.direct) {
-            const etaArr = etaCache[route.name] || [];
-            const cands = findBusCandidates(etaArr, route.name, guilin.boardStop, route.dest);
-            const b = cands[0] || null;
-            let wait, missed = false, est = false;
-            const stopReachRel = walkLonshanT - nowMin;
-            let picked = null;
-            for (const c of cands) {
-                if (c.etaSec === null) break;
-                if (c.etaSec / 60 >= stopReachRel) { picked = c; break; }
-            }
-            if (picked) wait = picked.etaSec / 60 - stopReachRel;
-            else if (cands.length && cands[0].etaSec !== null) { missed = true; wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            else { wait = FALLBACK_BUS_WAIT[route.name] || 10; est = true; }
-            const arrive = walkLonshanT + wait + route.ride + route.destWalk * calib;
-            results.push({
-                type: 'guilin-direct', grpIndex: 0, routeLabel: route.name,
-                cardTitle: `🚗 桂林路 ➔ 🚌 ${route.name} 直達（龍山寺站）`,
-                desc: `環河快下桂林路 ➔ 步行 ${Math.round(WALK.guilinToLonshan * calib)} 分到【${guilin.boardStop}】→ ${route.name} 搭 ${route.ride} 分直達【${route.dest}】→ 步行 ${route.destWalk} 分（免換乘，走路較多）`,
-                total: arrive - depMin, arrive, est, missed,
-                steps: [
-                    { name: '① 步行到捷運龍山寺站', info: `桂林路下車 ➔ 步行 ${Math.round(WALK.guilinToLonshan * calib)} 分（Google Maps 實測）`, clock: `${minToTimeStr(walkLonshanT)} 抵達` },
-                    { name: `② 公車 ${route.name} 直達`, info: `車程 ${route.ride} 分｜下車【${route.dest}】`, clock: `${minToTimeStr(walkLonshanT + wait)} 搭上${est ? '（推估）' : ''}` },
-                ],
-                bestBusRow: { name: route.name, eta: b && typeof b.etaSec === 'number' ? b.etaSec : null, plate: b ? b.plate : '', ok: !missed && !est, est },
-            });
-        }
+        const walkLonshanT = depMin + WALK.guilinToLonshan * calib;   // 走到捷運龍山寺站（捷運轉乘用）
+        // E1) 龍山寺站直達公車（907/1/907通勤）已於 2026-08-13 刪除：通勤路線不經過龍山寺（使用者指示）
         // E2) 桂林路站 → 673 直達（路線繞，車程長）
         {
             const route = guilin.guilin673;
@@ -1381,8 +1367,19 @@ function renderUI(results, depStr, etaCache) {
     }
 
     results.sort((a, b) => a.total - b.total);
+    // 小南門直達站牌開關：預設隱藏 植物園/和平中華路口（桂林路起點不受影響，2026-08-13 依使用者指示）
+    if (currentMode === 'morning' && !getShowDirect()) {
+        results = results.filter(r => r.type !== 'direct');
+    }
     const best = results[0];
     const SHOW_TOP = 10;   // 依使用者需求：只列出最短的前 10 個組合
+    // 置頂固定：被釘選的卡片永遠排最前面（不隨時間排名移動）
+    const pins = getPins();
+    if (pins.size) {
+        const pinned = [], rest = [];
+        results.forEach(r => (pins.has(r.cardTitle) ? pinned : rest).push(r));
+        results = pinned.concat(rest);
+    }
     const topResults = results.slice(0, SHOW_TOP);
     const startLocName = currentMode === 'morning' ? '地表到達' : '處本部出發';
     const destLocName = currentMode === 'morning' ? '預計抵達處本部' : '預計抵達農業部';
@@ -1438,7 +1435,7 @@ function renderUI(results, depStr, etaCache) {
             : null;
         const guilinGroup = currentMode === 'morning' && r.type === 'guilin-direct'
             ? (r.grpIndex === 0
-                ? { boardStop: MORNING_GUILIN.boardStop, routes: MORNING_GUILIN.direct }
+                ? { boardStop: '', routes: [] }   // grpIndex 0（龍山寺站直達）已於 2026-08-13 刪除
                 : { boardStop: MORNING_GUILIN.guilin673Stop, routes: [MORNING_GUILIN.guilin673] })
             : null;
         const guilinMrtGroup = currentMode === 'morning' && r.type === 'guilin-mrt' && r.grpIndex === 1
@@ -1487,6 +1484,7 @@ function renderUI(results, depStr, etaCache) {
             <div class="card-header-bar">
                 <div class="route-title">${r.cardTitle}</div>
                 <span class="rank-badge ${rankClass}">${rankText}</span>
+                <button class="pin-btn ${pins.has(r.cardTitle) ? 'pinned' : ''}" data-pin="${r.cardTitle}" onclick="togglePin(this)" title="${pins.has(r.cardTitle) ? '取消置頂' : '置頂固定（不隨時間排名移動）'}">📌</button>
             </div>
             ${boardHtml}
             ${busRowsHtml}
@@ -1540,7 +1538,6 @@ async function fetchLiveTransitData() {
         const routeNames = currentMode === 'morning'
             ? [...new Set(MORNING_BUS.flatMap(g => g.routes.map(r => r.name))
                 .concat(MORNING_DIRECT.flatMap(g => g.routes.map(r => r.name)))
-                .concat(MORNING_GUILIN.direct.map(r => r.name))
                 .concat([MORNING_GUILIN.guilin673.name])
                 .concat(MORNING_GUILIN.mrt.bus.map(r => r.name)))]
             : [...new Set(EVENING_BUS.flatMap(g => g.routes.map(r => r.name)))];
@@ -1590,6 +1587,7 @@ async function fetchLiveTransitData() {
             setStatus(`⏰ 出發時間 ${minToTimeStr(depMinNow)} ≠ 現在 ${minToTimeStr(nowMin)}（公車到站以現在推算）`, 'est');
         }
         renderUI(results, depStr, etaCache);
+        lastRender = { depStr, data: results, eta: etaCache };
     } catch (e) {
         const msg = (e && e.message) || String(e);
         const needsKey = /401|403|Valid API|invalid/i.test(msg);
@@ -1610,6 +1608,35 @@ async function fetchLiveTransitData() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+/* ---------- 顯示開關與置頂固定（2026-08-13 新增） ---------- */
+function getShowDirect() {
+    return localStorage.getItem('commute_show_direct') === '1';
+}
+function onShowDirectToggle() {
+    localStorage.setItem('commute_show_direct', document.getElementById('showDirectToggle').checked ? '1' : '0');
+    fetchLiveTransitData();
+}
+function initShowDirectToggle() {
+    const el = document.getElementById('showDirectToggle');
+    if (el) el.checked = getShowDirect();
+}
+function getPins() {
+    try { return new Set(JSON.parse(localStorage.getItem('commute_pins') || '[]')); } catch (e) { return new Set(); }
+}
+function togglePin(btn) {
+    const title = btn.getAttribute('data-pin');
+    if (!title) return;
+    const pins = getPins();
+    if (pins.has(title)) pins.delete(title); else pins.add(title);
+    localStorage.setItem('commute_pins', JSON.stringify([...pins]));
+    // 直接重排（不重新抓 API）：有快取用快取，沒有才重抓
+    if (lastRender && lastRender.data) {
+        renderUI(lastRender.data, lastRender.depStr, lastRender.eta || {});
+    } else {
+        fetchLiveTransitData();
+    }
+}
+
 /* ---------- 事件綁定與啟動 ---------- */
 document.getElementById('depTime').addEventListener('change', () => {
     isAutoFollowNow = false;
@@ -1618,6 +1645,7 @@ document.getElementById('depTime').addEventListener('change', () => {
 document.getElementById('walkCalib').addEventListener('change', fetchLiveTransitData);
 
 initKeyCard();
+initShowDirectToggle();
 setCurrentTimeInInput();
 setInterval(fetchLiveTransitData, 60000);   // 每 60 秒自動刷新
 fetchLiveTransitData();

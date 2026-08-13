@@ -43,7 +43,7 @@ eval(m[1]);
 const snap = JSON.parse(fs.readFileSync(path.join(BASE, 'tdx_snapshot.json'), 'utf8'));
 const sched = JSON.parse(fs.readFileSync(path.join(BASE, 'sched_processed.json'), 'utf8'));
 
-const routeNames = ['1', '907', '棕12', '棕22', '673', '綠11', '基隆路幹線', '254', '295副', '907通勤'];
+const routeNames = ['1', '907', '棕12', '棕22', '673', '綠11', '基隆路幹線', '254', '295副', '295', '907通勤'];
 const etaCache = {};
 for (const rn of routeNames) {
     etaCache[rn] = snap.bus.filter(r => (r.RouteName || {}).Zh_tw === rn);
@@ -77,8 +77,8 @@ const cases = [
     ['回程 自來水事業處(綠11)', '自來水事業處', '捷運公館站'],
     ['回程 長興街口→台電大樓', '基隆長興街口', '捷運台電大樓站'],
     ['回程 長興街口→古亭(杭州)', '基隆長興街口', '捷運古亭站(杭州)'],
-    ['★桂林 捷運龍山寺站 907/1', '捷運龍山寺站', '基隆長興街口'],
     ['★桂林 桂林路站 673', '桂林路', '基隆長興街口'],
+    ['★新 古亭站 295 → 自來水處(辛亥)', '捷運古亭站(和平)', '自來水處(辛亥)'],
     ['★新 公館圓環站 基隆路幹線/254', '公館', '基隆長興街口'],
     ['★新 古亭站 295副/907通勤', '捷運古亭站(和平)', '基隆長興街口'],
     ['★新 植物園 907通勤', '植物園', '基隆長興街口'],
